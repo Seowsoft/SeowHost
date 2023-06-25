@@ -12,7 +12,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageProjectUrl>https://www.seowsoft.com</PackageProjectUrl>
     <PackageIcon>Seowsoft.png</PackageIcon>
-    <RepositoryUrl>https://github.com/Seowsoft/SeowHost/SeowHostLib</RepositoryUrl>
+    <RepositoryUrl>https://github.com/Seowsoft/SeowHost/tree/main/Src/SeowHostLib</RepositoryUrl>
     <PackageReadmeFile>Readme.md</PackageReadmeFile>
     <PackageTags>host folder file directory</PackageTags>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
