@@ -17,7 +17,7 @@
 '* Author: Seowsoft
 '* Describe: 主机文件夹类|Host folder class
 '* Home Url: https://www.seowsoft.com
-'* Version: 1.25
+'* Version: 1.26
 '* Create Time: 7/3/2023
 '* 1.1	10/3/2023   Add fFillByRs
 '* 1.2	13/3/2023   Modify New
@@ -41,21 +41,23 @@
 '* 1.22	7/5/2023	Modify StaticInf
 '* 1.23	24/6/2023	Modify mBeginScan
 '* 1.25	25/6/2023	Modify mFindFolder,mFindFolderEnd
+'* 1.26	30/7/2023	Add StaticInf_TimeoutMinutes,StaticInf_ScanLevel
 '**********************************
 Imports PigSQLSrvLib
 Imports PigToolsLiteLib
 Imports System.Threading
-Imports System.ComponentModel.Design
+'Imports System.ComponentModel.Design
 
 Public Class HostFolder
 	Inherits PigBaseLocal
-	Private Const CLS_VERSION As String = "1.25.6"
+	Private Const CLS_VERSION As String = "1.26.2"
 
 	Public ReadOnly Property HostDirs As New HostDirs
 	Friend ReadOnly Property fParent As Host
 	Friend ReadOnly Property fPigFunc As New PigFunc
 	Private ReadOnly Property mFS As New PigFileSystem
 
+	Private Property mTabExt As fTabExt
 	Private mLastActiveTime As Date
 
 	'
@@ -104,6 +106,85 @@ Public Class HostFolder
 		End Try
 	End Sub
 
+	Public Property StaticInf_ScanLevel As EnmScanLevel
+		Get
+			Dim strRet As String = ""
+			Try
+				strRet = Me.mRefTabExt()
+				If strRet <> "OK" Then Throw New Exception(strRet)
+				StaticInf_ScanLevel = Me.mTabExt.GetExtLongValue(Me.FolderID, "ScanLevel", strRet)
+				If strRet <> "OK" Then Throw New Exception(strRet)
+			Catch ex As Exception
+				Me.SetSubErrInf("StaticInf_ScanLevel.Get", ex)
+				Return EnmScanLevel.Fast
+			End Try
+		End Get
+		Friend Set(value As EnmScanLevel)
+			Dim strRet As String = ""
+			Try
+				strRet = Me.mRefTabExt()
+				If strRet <> "OK" Then Throw New Exception(strRet)
+				strRet = Me.mTabExt.SetExtValue(Me.FolderID, "ScanLevel", CStr(value))
+				If strRet <> "OK" Then Throw New Exception(strRet)
+			Catch ex As Exception
+				Me.SetSubErrInf("StaticInf_ScanLevel.Set", ex)
+			End Try
+		End Set
+	End Property
+
+
+	Public Property ActiveInf_ErrInf As String
+		Get
+			Dim strRet As String = ""
+			Try
+				strRet = Me.mRefTabExt()
+				If strRet <> "OK" Then Throw New Exception(strRet)
+				ActiveInf_ErrInf = Me.mTabExt.GetExtLongValue(Me.FolderID, "ErrInf", strRet)
+				If strRet <> "OK" Then Throw New Exception(strRet)
+			Catch ex As Exception
+				Me.SetSubErrInf("ActiveInf_ErrInf.Get", ex)
+				Return 10
+			End Try
+		End Get
+		Friend Set(value As String)
+			Dim strRet As String = ""
+			Try
+				strRet = Me.mRefTabExt()
+				If strRet <> "OK" Then Throw New Exception(strRet)
+				strRet = Me.mTabExt.SetExtValue(Me.FolderID, "ErrInf", CStr(value))
+				If strRet <> "OK" Then Throw New Exception(strRet)
+			Catch ex As Exception
+				Me.SetSubErrInf("ActiveInf_ErrInf.Set", ex)
+			End Try
+		End Set
+	End Property
+
+	Public Property StaticInf_TimeoutMinutes As Integer
+		Get
+			Dim strRet As String = ""
+			Try
+				strRet = Me.mRefTabExt()
+				If strRet <> "OK" Then Throw New Exception(strRet)
+				StaticInf_TimeoutMinutes = Me.mTabExt.GetExtLongValue(Me.FolderID, "TimeoutMinutes", strRet)
+				If strRet <> "OK" Then Throw New Exception(strRet)
+				If StaticInf_TimeoutMinutes <= 0 Then StaticInf_TimeoutMinutes = 10
+			Catch ex As Exception
+				Me.SetSubErrInf("StaticInf_TimeoutMinutes.Get", ex)
+				Return 10
+			End Try
+		End Get
+		Friend Set(value As Integer)
+			Dim strRet As String = ""
+			Try
+				strRet = Me.mRefTabExt()
+				If strRet <> "OK" Then Throw New Exception(strRet)
+				strRet = Me.mTabExt.SetExtValue(Me.FolderID, "TimeoutMinutes", CStr(value))
+				If strRet <> "OK" Then Throw New Exception(strRet)
+			Catch ex As Exception
+				Me.SetSubErrInf("StaticInf_TimeoutMinutes.Set", ex)
+			End Try
+		End Set
+	End Property
 
 	Private Function mGetFolderID(HostID As String, FolderPath As String, ByRef OutFolderID As String) As String
 		Try
@@ -171,197 +252,44 @@ Public Class HostFolder
 		End Set
 	End Property
 
-	Private Function mInitStaticInf() As String
+
+	Private Function mRefTabExt() As String
+		Dim LOG As New PigStepLog("mRefTabExt")
 		Try
-			mStaticInfXml = New PigXml(False)
-			With mStaticInfXml
-				.AddEleLeftSign("Root")
-				.AddEle("ScanLevel", EnmScanLevel.Fast)
-				.AddEle("TimeoutMinutes", 10)
-				.AddEleRightSign("Root")
-				Dim strRet As String = .InitXmlDocument()
-				If strRet <> "OK" Then Throw New Exception(strRet)
-			End With
-			Return "OK"
-		Catch ex As Exception
-			Return Me.GetSubErrInf("mInitStaticInf", ex)
-		End Try
-	End Function
-
-	Private mStaticInfXml As PigXml
-	Public Property StaticInf() As String
-		Get
-			Try
-				If mStaticInfXml Is Nothing Then
-					Dim strRet As String = Me.mInitStaticInf
-					If strRet <> "OK" Then Throw New Exception(strRet)
-				End If
-				Return mStaticInfXml.MainXmlStr
-			Catch ex As Exception
-				Me.SetSubErrInf("StaticInf.Get", ex)
-				Return ""
-			End Try
-		End Get
-		Friend Set(value As String)
-			Try
-				Dim bolIsInit As Boolean = False
-				If mStaticInfXml Is Nothing Then
-					bolIsInit = True
-				ElseIf value <> mStaticInfXml.MainXmlStr Then
-					bolIsInit = True
-				End If
-				If bolIsInit = True Then
-					mStaticInfXml = New PigXml(False)
-					mStaticInfXml.SetMainXml(value)
-					Dim strRet As String = mStaticInfXml.InitXmlDocument()
-					If strRet <> "OK" Then Throw New Exception(strRet)
-					Me.mUpdateCheck.Add("StaticInf")
-				End If
-			Catch ex As Exception
-				Me.mInitStaticInf()
-				Me.SetSubErrInf("StaticInf.Set", ex)
-			End Try
-		End Set
-	End Property
-
-	Private mActiveInfXml As PigXml
-	Public Property ActiveInf() As String
-		Get
-			If mActiveInfXml Is Nothing Then Me.mRefActiveInfXml()
-			Return mActiveInfXml.MainXmlStr
-		End Get
-		Friend Set(value As String)
-			Try
-				If mActiveInfXml Is Nothing Then
-					mActiveInfXml = New PigXml(False)
-					mActiveInfXml.SetMainXml(value)
-					Me.mUpdateCheck.Add("ActiveInf")
-				ElseIf value <> mActiveInfXml.MainXmlStr Then
-					mActiveInfXml = New PigXml(False)
-					mActiveInfXml.SetMainXml(value)
-					Me.mUpdateCheck.Add("ActiveInf")
-				End If
-			Catch ex As Exception
-				Me.SetSubErrInf("ActiveInf.Set", ex)
-			End Try
-		End Set
-	End Property
-
-	Private Function mRefStaticInfXml() As String
-		Try
-			Dim strXml As String = ""
-			If mStaticInfXml Is Nothing Then
-				mStaticInfXml = New PigXml(False)
+			If Me.mTabExt Is Nothing Then
+				LOG.StepName = "New fTabExt"
+				Me.mTabExt = New fTabExt(fTabExt.EnmWhatTab.HFFolderInf, Me.fParent.fParent.fConnSQLSrv)
+				If Me.mTabExt.LastErr <> "" Then Throw New Exception(Me.mTabExt.LastErr)
+			Else
+				LOG.StepName = "RefConn"
+				LOG.Ret = Me.mTabExt.RefConn(Me.fParent.fParent.fConnSQLSrv)
+				If LOG.Ret <> "OK" Then Throw New Exception(LOG.Ret)
 			End If
-			strXml = mStaticInfXml.MainXmlStr
-			With mStaticInfXml
-				.AddEleLeftSign("Root")
-				.AddEle("TimeoutMinutes", Me.StaticInf_TimeoutMinutes)
-				.AddEle("ScanLevel", Me.StaticInf_ScanLevel)
-				.AddEleRightSign("Root")
-				If .MainXmlStr <> strXml Then
-					Me.mUpdateCheck.Add("StaticInf")
-				End If
-			End With
 			Return "OK"
 		Catch ex As Exception
-			Return Me.GetSubErrInf("mRefStaticInfXml", ex)
-		End Try
-	End Function
-
-	Private Function mRefActiveInfXml() As String
-		Try
-			Dim strXml As String = ""
-			If mActiveInfXml IsNot Nothing Then strXml = mActiveInfXml.MainXmlStr
-			mActiveInfXml = New PigXml(False)
-			With mActiveInfXml
-				.AddEle("ErrInf", Me.mActiveInf_ErrInf)
-				If .MainXmlStr <> strXml Then
-					Me.mUpdateCheck.Add("ActiveInf")
-				End If
-			End With
-			Return "OK"
-		Catch ex As Exception
-			Return Me.GetSubErrInf("mRefActiveInfXml", ex)
+			Return Me.GetSubErrInf(LOG.SubName, LOG.StepName, ex)
 		End Try
 	End Function
 
 
-	Public Property StaticInf_TimeoutMinutes() As Integer
-		Get
-			Try
-				If mStaticInfXml IsNot Nothing Then
-					Return mStaticInfXml.XmlDocGetInt("Root.TimeoutMinutes")
-				Else
-					Return 10
-				End If
-			Catch ex As Exception
-				Me.SetSubErrInf("StaticInf_TimeoutMinutes.Get", ex)
-				Return -1
-			End Try
-		End Get
-		Friend Set(value As Integer)
-			Try
-				If mStaticInfXml Is Nothing Then
-				ElseIf value <> Me.StaticInf_ScanLevel Then
-					Dim strRet As String = mStaticInfXml.SetXmlDocValue("Root.TimeoutMinutes", value)
-					If strRet <> "OK" Then Throw New Exception(strRet)
-					Me.mUpdateCheck.Add("StaticInf")
-				End If
-			Catch ex As Exception
-				Me.SetSubErrInf("StaticInf_TimeoutMinutes.Set", ex)
-			End Try
-		End Set
-	End Property
-
-	Public Property StaticInf_ScanLevel() As EnmScanLevel
-		Get
-			Try
-				If mStaticInfXml IsNot Nothing Then
-					Return mStaticInfXml.XmlDocGetInt("Root.ScanLevel")
-				Else
-					Return EnmScanLevel.Fast
-				End If
-			Catch ex As Exception
-				Me.SetSubErrInf("StaticInf_ScanLevel.Get", ex)
-				Return EnmScanLevel.Fast
-			End Try
-		End Get
-		Friend Set(value As EnmScanLevel)
-			Try
-				If mStaticInfXml Is Nothing Then
-				ElseIf value <> Me.StaticInf_ScanLevel Then
-					Dim strRet As String = mStaticInfXml.SetXmlDocValue("Root.ScanLevel", value)
-					If strRet <> "OK" Then Throw New Exception(strRet)
-					Me.mUpdateCheck.Add("StaticInf")
-				End If
-			Catch ex As Exception
-				Me.SetSubErrInf("StaticInf_ScanLevel.Set", ex)
-			End Try
-		End Set
-	End Property
+	'Private Function mInitStaticInf() As String
+	'	Try
+	'		mStaticInfXml = New PigXml(False)
+	'		With mStaticInfXml
+	'			.AddEleLeftSign("Root")
+	'			.AddEle("ScanLevel", EnmScanLevel.Fast)
+	'			.AddEle("TimeoutMinutes", 10)
+	'			.AddEleRightSign("Root")
+	'			Dim strRet As String = .InitXmlDocument()
+	'			If strRet <> "OK" Then Throw New Exception(strRet)
+	'		End With
+	'		Return "OK"
+	'	Catch ex As Exception
+	'		Return Me.GetSubErrInf("mInitStaticInf", ex)
+	'	End Try
+	'End Function
 
 
-
-	Private mActiveInf_ErrInf As String = ""
-	Public Property ActiveInf_ErrInf() As String
-		Get
-			Try
-				If mActiveInf_ErrInf = "" Then
-					mActiveInf_ErrInf = mActiveInfXml.XmlGetStr("ErrInf")
-				End If
-			Catch ex As Exception
-				mActiveInf_ErrInf = ""
-			End Try
-			Return mActiveInf_ErrInf
-		End Get
-		Friend Set(value As String)
-			If value <> mActiveInf_ErrInf Then
-				mActiveInf_ErrInf = value
-				Me.mRefActiveInfXml()
-			End If
-		End Set
-	End Property
 
 	Private mFolderPath As String = ""
 	Public Property FolderPath() As String
@@ -586,18 +514,6 @@ Public Class HostFolder
 							UpdateCnt += 1
 						End If
 					End If
-					If .IsItemExists("StaticInf") = True Then
-						If Me.StaticInf <> .Item("StaticInf").StrValue Then
-							Me.StaticInf = .Item("StaticInf").StrValue
-							UpdateCnt += 1
-						End If
-					End If
-					If .IsItemExists("ActiveInf") = True Then
-						If Me.ActiveInf <> .Item("ActiveInf").StrValue Then
-							Me.ActiveInf = .Item("ActiveInf").StrValue
-							UpdateCnt += 1
-						End If
-					End If
 					If .IsItemExists("ScanBeginTime") = True Then
 						If Me.ScanBeginTime <> .Item("ScanBeginTime").DateValue Then
 							Me.ScanBeginTime = .Item("ScanBeginTime").DateValue
@@ -681,18 +597,6 @@ Public Class HostFolder
 					If .IsColExists(RSNo, "ScanStatus") = True Then
 						If Me.ScanStatus <> .IntValue(RSNo, RowNo, "ScanStatus") Then
 							Me.ScanStatus = .IntValue(RSNo, RowNo, "ScanStatus")
-							UpdateCnt += 1
-						End If
-					End If
-					If .IsColExists(RSNo, "StaticInf") = True Then
-						If Me.StaticInf <> .StrValue(RSNo, RowNo, "StaticInf") Then
-							Me.StaticInf = .StrValue(RSNo, RowNo, "StaticInf")
-							UpdateCnt += 1
-						End If
-					End If
-					If .IsColExists(RSNo, "ActiveInf") = True Then
-						If Me.ActiveInf <> .StrValue(RSNo, RowNo, "ActiveInf") Then
-							Me.ActiveInf = .StrValue(RSNo, RowNo, "ActiveInf")
 							UpdateCnt += 1
 						End If
 					End If

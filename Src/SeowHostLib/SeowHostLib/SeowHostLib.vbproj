@@ -3,7 +3,7 @@
   <PropertyGroup>
     <RootNamespace>SeowHostLib</RootNamespace>
     <TargetFrameworks>net20;net30;net35;net40;net45;net46;net47;net48;netcoreapp3.1;net5.0;net6.0;net7.0;</TargetFrameworks>
-    <Version>1.1.2</Version>
+    <Version>1.1.18</Version>
     <Title>Seow host library</Title>
     <Authors>Seowsoft</Authors>
     <Company>Seowsoft Studio</Company>
@@ -18,11 +18,12 @@
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageReleaseNotes>Optimizing the database structure, it is recommended to delete and rebuild the old table named Start with _pt.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="PigCmdLib" Version="2.2.76" />
-    <PackageReference Include="PigSQLSrvLib" Version="2.8.116" />
+    <PackageReference Include="PigCmdLib" Version="2.2.78" />
+    <PackageReference Include="PigSQLSrvLib" Version="2.8.118" />
   </ItemGroup>
 
   <ItemGroup>

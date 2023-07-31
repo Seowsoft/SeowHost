@@ -17,7 +17,7 @@
 '* Author: Seowsoft
 '* Describe: 主机应用|Host Applications
 '* Home Url: https://www.seowsoft.com
-'* Version: 1.26
+'* Version: 1.27
 '* Create Time: 1/10/2022
 '* 1.1  1/10/2022   Add RefDBConn
 '* 1.2  15/10/2022  Add mCreateTable_HostInf, modify RefDBConn
@@ -43,6 +43,8 @@
 '* 1.23	5/5/2023    Modify RefDBConn
 '* 1.25	6/5/2023    Add fIsHostFolderExists
 '* 1.26	7/5/2023    Modify fMergeHostDirInf
+'* 1.27	29/7/2023   Modify RefDBConn,add mCreateTable_HFDirExtInf,mCreateTable_HFFolderExtInf,mCreateTable_HostExtInf
+'* 1.28	30/7/2023   Modify fConnSQLSrv,AddNewHostFolder
 '**********************************
 Imports System.Data
 Imports System.IO
@@ -57,11 +59,11 @@ Imports PigToolsLiteLib
 Imports PigCmdLib
 Public Class SeowHostApp
     Inherits PigBaseLocal
-    Private Const CLS_VERSION As String = "1.26.28"
+    Private Const CLS_VERSION As String = "1.28.8"
 
     Public ReadOnly Property BaseDirPath As String
     Private ReadOnly Property mMyHostID As String
-    Private Property mConnSQLSrv As ConnSQLSrv
+    Friend Property fConnSQLSrv As ConnSQLSrv
     Private Property mPigFunc As New PigFunc
     Private Property mPigSysCmd As New PigSysCmd
     Private Property mLogFilePath As String
@@ -154,7 +156,7 @@ Public Class SeowHostApp
             End If
             If strError <> "" Then Throw New Exception(strError)
             LOG.StepName = "Set ConnSQLSrv"
-            Me.mConnSQLSrv = ConnSQLSrv
+            Me.fConnSQLSrv = ConnSQLSrv
             LOG.StepName = "RefDBConn"
             LOG.Ret = Me.RefDBConn(True)
             If LOG.Ret <> "OK" Then Throw New Exception(LOG.Ret)
@@ -172,208 +174,88 @@ Public Class SeowHostApp
     '''' <returns></returns>
     Public Function RefDBConn(Optional IsCreateDBObj As Boolean = False) As String
         Dim LOG As New PigStepLog("RefDBConn")
-        Dim strSQL As String = ""
+        Dim strSQL As String = "", strTabName As String = ""
         Try
-            Dim oCmdSQLSrvText As CmdSQLSrvText
-            If Me.mConnSQLSrv.IsDBConnReady = False Then
+            If Me.fConnSQLSrv.IsDBConnReady = False Then
                 LOG.StepName = "OpenOrKeepActive"
-                Me.mConnSQLSrv.ClearErr()
-                Me.mConnSQLSrv.OpenOrKeepActive()
-                If Me.mConnSQLSrv.LastErr <> "" Then Throw New Exception(Me.mConnSQLSrv.LastErr)
+                Me.fConnSQLSrv.ClearErr()
+                Me.fConnSQLSrv.OpenOrKeepActive()
+                If Me.fConnSQLSrv.LastErr <> "" Then Throw New Exception(Me.fConnSQLSrv.LastErr)
             End If
             If IsCreateDBObj = True Then
-                Me.mSQLSrvTools = New SQLSrvTools(Me.mConnSQLSrv)
-                'LOG.StepName = "IsDBObjExists(_ptHFConfInf)"
-                'If oSQLSrvTools.IsDBObjExists(SQLSrvTools.EnmDBObjType.UserTable, "_ptHFConfInf") = False Then
-                '    LOG.StepName = "mCreateTable_DFConfInf"
-                '    LOG.Ret = mCreateTable_DFConfInf()
-                '    If LOG.Ret <> "OK" Then Throw New Exception(LOG.Ret)
-                'End If
-                LOG.StepName = "IsDBObjExists(_ptHFContInf)"
-                If Me.mSQLSrvTools.IsDBObjExists(SQLSrvTools.EnmDBObjType.UserTable, "_ptHFContInf") = False Then
+                Me.mSQLSrvTools = New SQLSrvTools(Me.fConnSQLSrv)
+                strTabName = "_ptLargeExtInf"
+                If Me.mSQLSrvTools.IsDBObjExists(SQLSrvTools.EnmDBObjType.UserTable, strTabName) = False Then
+                    LOG.StepName = "mCreateTable_LargeExtInf"
+                    LOG.Ret = Me.mCreateTable_LargeExtInf
+                    If LOG.Ret <> "OK" Then Throw New Exception(LOG.Ret)
+                End If
+                strTabName = "_ptHFContInf"
+                If Me.mSQLSrvTools.IsDBObjExists(SQLSrvTools.EnmDBObjType.UserTable, strTabName) = False Then
                     LOG.StepName = "mCreateTable_HFContInf"
                     LOG.Ret = Me.mCreateTable_HFContInf
                     If LOG.Ret <> "OK" Then Throw New Exception(LOG.Ret)
                 End If
-                LOG.StepName = "IsDBObjExists(_ptHFContSegInf)"
-                If Me.mSQLSrvTools.IsDBObjExists(SQLSrvTools.EnmDBObjType.UserTable, "_ptHFContSegInf") = False Then
+                strTabName = "_ptHFContSegInf"
+                If Me.mSQLSrvTools.IsDBObjExists(SQLSrvTools.EnmDBObjType.UserTable, strTabName) = False Then
                     LOG.StepName = "mCreateTable_HFContSegInf"
                     LOG.Ret = Me.mCreateTable_HFContSegInf()
                     If LOG.Ret <> "OK" Then Throw New Exception(LOG.Ret)
                 End If
-                LOG.StepName = "IsDBObjExists(_ptHostInf)"
-                If Me.mSQLSrvTools.IsDBObjExists(SQLSrvTools.EnmDBObjType.UserTable, "_ptHostInf") = False Then
+                strTabName = "_ptHostInf"
+                If Me.mSQLSrvTools.IsDBObjExists(SQLSrvTools.EnmDBObjType.UserTable, strTabName) = False Then
                     LOG.StepName = "mCreateTable_HostInf"
                     LOG.Ret = Me.mCreateTable_HostInf
                     If LOG.Ret <> "OK" Then Throw New Exception(LOG.Ret)
                 End If
-                LOG.StepName = "IsDBObjExists(_ptHFFolderInf)"
-                If Me.mSQLSrvTools.IsDBObjExists(SQLSrvTools.EnmDBObjType.UserTable, "_ptHFFolderInf") = False Then
+                strTabName = "_ptHostExtInf"
+                If Me.mSQLSrvTools.IsDBObjExists(SQLSrvTools.EnmDBObjType.UserTable, strTabName) = False Then
+                    LOG.StepName = "mCreateTable_HostExtInf"
+                    LOG.Ret = Me.mCreateTable_HostExtInf
+                    If LOG.Ret <> "OK" Then Throw New Exception(LOG.Ret)
+                End If
+                strTabName = "_ptHFFolderInf"
+                If Me.mSQLSrvTools.IsDBObjExists(SQLSrvTools.EnmDBObjType.UserTable, strTabName) = False Then
                     LOG.StepName = "mCreateTable_HFFolderInf"
                     LOG.Ret = Me.mCreateTable_HFFolderInf()
                     If LOG.Ret <> "OK" Then Throw New Exception(LOG.Ret)
                 End If
-                LOG.StepName = "IsDBObjExists(_ptHFDirInf)"
-                If Me.mSQLSrvTools.IsDBObjExists(SQLSrvTools.EnmDBObjType.UserTable, "_ptHFDirInf") = False Then
+                strTabName = "_ptHFFolderExtInf"
+                If Me.mSQLSrvTools.IsDBObjExists(SQLSrvTools.EnmDBObjType.UserTable, strTabName) = False Then
+                    LOG.StepName = "mCreateTable_HFFolderExtInf"
+                    LOG.Ret = Me.mCreateTable_HFFolderExtInf
+                    If LOG.Ret <> "OK" Then Throw New Exception(LOG.Ret)
+                End If
+                strTabName = "_ptHFDirInf"
+                If Me.mSQLSrvTools.IsDBObjExists(SQLSrvTools.EnmDBObjType.UserTable, strTabName) = False Then
                     LOG.StepName = "mCreateTable_HFDirInf"
                     LOG.Ret = Me.mCreateTable_HFDirInf
                     If LOG.Ret <> "OK" Then Throw New Exception(LOG.Ret)
-                ElseIf Me.mSQLSrvTools.IsTabColExists("_ptHFDirInf", "MaxFileUpdateTime") = False Then
-                    With Me.mPigFunc
-                        strSQL = ""
-                        .AddMultiLineText(strSQL, "ALTER TABLE dbo._ptHFDirInf ADD MaxFileUpdateTime datetime DEFAULT('1/1/1900')")
-                    End With
-                    LOG.StepName = "ExecuteNonQuery"
-                    oCmdSQLSrvText = New CmdSQLSrvText(strSQL)
-                    With oCmdSQLSrvText
-                        .ActiveConnection = Me.mConnSQLSrv.Connection
-                        LOG.Ret = .ExecuteNonQuery()
-                        If LOG.Ret <> "OK" Then Throw New Exception(LOG.Ret)
-                    End With
-                    With Me.mPigFunc
-                        strSQL = ""
-                        .AddMultiLineText(strSQL, "UPDATE dbo._ptHFDirInf SET MaxFileUpdateTime='1/1/1900'")
-                        .AddMultiLineText(strSQL, "ALTER TABLE dbo._ptHFDirInf ALTER COLUMN MaxFileUpdateTime datetime NOT NULL")
-                    End With
-                    LOG.StepName = "ExecuteNonQuery"
-                    oCmdSQLSrvText = New CmdSQLSrvText(strSQL)
-                    With oCmdSQLSrvText
-                        .ActiveConnection = Me.mConnSQLSrv.Connection
-                        LOG.Ret = .ExecuteNonQuery()
-                        If LOG.Ret <> "OK" Then Throw New Exception(LOG.Ret)
-                    End With
-                ElseIf Me.mSQLSrvTools.IsTabColExists("_ptHFDirInf", "AvgFileUpdateTime") = False Then
-                    With Me.mPigFunc
-                        strSQL = ""
-                        .AddMultiLineText(strSQL, "ALTER TABLE dbo._ptHFDirInf ADD AvgFileUpdateTime datetime DEFAULT('1/1/1900')")
-                    End With
-                    LOG.StepName = "ExecuteNonQuery"
-                    oCmdSQLSrvText = New CmdSQLSrvText(strSQL)
-                    With oCmdSQLSrvText
-                        .ActiveConnection = Me.mConnSQLSrv.Connection
-                        LOG.Ret = .ExecuteNonQuery()
-                        If LOG.Ret <> "OK" Then Throw New Exception(LOG.Ret)
-                    End With
-                    With Me.mPigFunc
-                        strSQL = ""
-                        .AddMultiLineText(strSQL, "UPDATE dbo._ptHFDirInf SET AvgFileUpdateTime='1/1/1900'")
-                        .AddMultiLineText(strSQL, "ALTER TABLE dbo._ptHFDirInf ALTER COLUMN AvgFileUpdateTime datetime NOT NULL")
-                    End With
-                    LOG.StepName = "ExecuteNonQuery"
-                    oCmdSQLSrvText = New CmdSQLSrvText(strSQL)
-                    With oCmdSQLSrvText
-                        .ActiveConnection = Me.mConnSQLSrv.Connection
-                        LOG.Ret = .ExecuteNonQuery()
-                        If LOG.Ret <> "OK" Then Throw New Exception(LOG.Ret)
-                    End With
-                ElseIf Me.mSQLSrvTools.IsTabColExists("_ptHFDirInf", "StaticInf") = False Then
-                    With Me.mPigFunc
-                        strSQL = ""
-                        .AddMultiLineText(strSQL, "ALTER TABLE dbo._ptHFDirInf ADD StaticInf varchar(8000) DEFAULT('')")
-                    End With
-                    LOG.StepName = "ExecuteNonQuery"
-                    oCmdSQLSrvText = New CmdSQLSrvText(strSQL)
-                    With oCmdSQLSrvText
-                        .ActiveConnection = Me.mConnSQLSrv.Connection
-                        LOG.Ret = .ExecuteNonQuery()
-                        If LOG.Ret <> "OK" Then Throw New Exception(LOG.Ret)
-                    End With
-                    With Me.mPigFunc
-                        strSQL = ""
-                        .AddMultiLineText(strSQL, "UPDATE dbo._ptHFDirInf SET StaticInf=''")
-                        .AddMultiLineText(strSQL, "ALTER TABLE dbo._ptHFDirInf ALTER COLUMN StaticInf varchar(8000) NOT NULL")
-                    End With
-                    LOG.StepName = "ExecuteNonQuery"
-                    oCmdSQLSrvText = New CmdSQLSrvText(strSQL)
-                    With oCmdSQLSrvText
-                        .ActiveConnection = Me.mConnSQLSrv.Connection
-                        LOG.Ret = .ExecuteNonQuery()
-                        If LOG.Ret <> "OK" Then Throw New Exception(LOG.Ret)
-                    End With
-                ElseIf Me.mSQLSrvTools.IsTabColExists("_ptHFDirInf", "ActiveInf") = False Then
-                    With Me.mPigFunc
-                        strSQL = ""
-                        .AddMultiLineText(strSQL, "ALTER TABLE dbo._ptHFDirInf ADD ActiveInf varchar(max) DEFAULT('')")
-                    End With
-                    LOG.StepName = "ExecuteNonQuery"
-                    oCmdSQLSrvText = New CmdSQLSrvText(strSQL)
-                    With oCmdSQLSrvText
-                        .ActiveConnection = Me.mConnSQLSrv.Connection
-                        LOG.Ret = .ExecuteNonQuery()
-                        If LOG.Ret <> "OK" Then Throw New Exception(LOG.Ret)
-                    End With
-                    With Me.mPigFunc
-                        strSQL = ""
-                        .AddMultiLineText(strSQL, "UPDATE dbo._ptHFDirInf SET ActiveInf=''")
-                        .AddMultiLineText(strSQL, "ALTER TABLE dbo._ptHFDirInf ALTER COLUMN ActiveInf varchar(max) NOT NULL")
-                    End With
-                    LOG.StepName = "ExecuteNonQuery"
-                    oCmdSQLSrvText = New CmdSQLSrvText(strSQL)
-                    With oCmdSQLSrvText
-                        .ActiveConnection = Me.mConnSQLSrv.Connection
-                        LOG.Ret = .ExecuteNonQuery()
-                        If LOG.Ret <> "OK" Then Throw New Exception(LOG.Ret)
-                    End With
                 End If
-                LOG.StepName = "IsDBObjExists(_ptHFFileInf)"
-                If Me.mSQLSrvTools.IsDBObjExists(SQLSrvTools.EnmDBObjType.UserTable, "_ptHFFileInf") = False Then
+                strTabName = "_ptHFDirExtInf"
+                If Me.mSQLSrvTools.IsDBObjExists(SQLSrvTools.EnmDBObjType.UserTable, strTabName) = False Then
+                    LOG.StepName = "mCreateTable_ptHFDirExtInf"
+                    LOG.Ret = Me.mCreateTable_HFDirExtInf
+                    If LOG.Ret <> "OK" Then Throw New Exception(LOG.Ret)
+                End If
+                strTabName = "_ptHFFileInf"
+                If Me.mSQLSrvTools.IsDBObjExists(SQLSrvTools.EnmDBObjType.UserTable, strTabName) = False Then
                     LOG.StepName = "mCreateTable_HFFileInf"
                     LOG.Ret = Me.mCreateTable_HFFileInf
                     If LOG.Ret <> "OK" Then Throw New Exception(LOG.Ret)
-                ElseIf Me.mSQLSrvTools.IsTabColExists("_ptHFFileInf", "StaticInf") = False Then
-                    With Me.mPigFunc
-                        strSQL = ""
-                        .AddMultiLineText(strSQL, "ALTER TABLE dbo._ptHFFileInf ADD StaticInf varchar(8000) DEFAULT('')")
-                    End With
-                    LOG.StepName = "ExecuteNonQuery"
-                    oCmdSQLSrvText = New CmdSQLSrvText(strSQL)
-                    With oCmdSQLSrvText
-                        .ActiveConnection = Me.mConnSQLSrv.Connection
-                        LOG.Ret = .ExecuteNonQuery()
-                        If LOG.Ret <> "OK" Then Throw New Exception(LOG.Ret)
-                    End With
-                    With Me.mPigFunc
-                        strSQL = ""
-                        .AddMultiLineText(strSQL, "UPDATE dbo._ptHFFileInf SET StaticInf=''")
-                        .AddMultiLineText(strSQL, "ALTER TABLE dbo._ptHFFileInf ALTER COLUMN StaticInf varchar(8000) NOT NULL")
-                    End With
-                    LOG.StepName = "ExecuteNonQuery"
-                    oCmdSQLSrvText = New CmdSQLSrvText(strSQL)
-                    With oCmdSQLSrvText
-                        .ActiveConnection = Me.mConnSQLSrv.Connection
-                        LOG.Ret = .ExecuteNonQuery()
-                        If LOG.Ret <> "OK" Then Throw New Exception(LOG.Ret)
-                    End With
-                ElseIf Me.mSQLSrvTools.IsTabColExists("_ptHFFileInf", "ActiveInf") = False Then
-                    With Me.mPigFunc
-                        strSQL = ""
-                        .AddMultiLineText(strSQL, "ALTER TABLE dbo._ptHFFileInf ADD ActiveInf varchar(max) DEFAULT('')")
-                    End With
-                    LOG.StepName = "ExecuteNonQuery"
-                    oCmdSQLSrvText = New CmdSQLSrvText(strSQL)
-                    With oCmdSQLSrvText
-                        .ActiveConnection = Me.mConnSQLSrv.Connection
-                        LOG.Ret = .ExecuteNonQuery()
-                        If LOG.Ret <> "OK" Then Throw New Exception(LOG.Ret)
-                    End With
-                    With Me.mPigFunc
-                        strSQL = ""
-                        .AddMultiLineText(strSQL, "UPDATE dbo._ptHFFileInf SET ActiveInf=''")
-                        .AddMultiLineText(strSQL, "ALTER TABLE dbo._ptHFFileInf ALTER COLUMN ActiveInf varchar(max) NOT NULL")
-                    End With
-                    LOG.StepName = "ExecuteNonQuery"
-                    oCmdSQLSrvText = New CmdSQLSrvText(strSQL)
-                    With oCmdSQLSrvText
-                        .ActiveConnection = Me.mConnSQLSrv.Connection
-                        LOG.Ret = .ExecuteNonQuery()
-                        If LOG.Ret <> "OK" Then Throw New Exception(LOG.Ret)
-                    End With
+                End If
+                strTabName = "_ptHFFileExtInf"
+                If Me.mSQLSrvTools.IsDBObjExists(SQLSrvTools.EnmDBObjType.UserTable, strTabName) = False Then
+                    LOG.StepName = "mCreateTable_ptHFFileExtInf"
+                    LOG.Ret = Me.mCreateTable_HFFileExtInf
+                    If LOG.Ret <> "OK" Then Throw New Exception(LOG.Ret)
                 End If
             End If
             Me.mIsDBReady = True
             Return "OK"
         Catch ex As Exception
-            If strSQL <> "" Then LOG.AddStepNameInf(strSQL)
+            LOG.AddStepNameInf(strTabName)
+            LOG.AddStepNameInf(strSQL)
             Me.mIsDBReady = False
             Return Me.GetSubErrInf(LOG.SubName, LOG.StepName, ex)
         End Try
@@ -387,16 +269,14 @@ Public Class SeowHostApp
             Dim strSQL As String = ""
             With Me.mPigFunc
                 .AddMultiLineText(strSQL, "CREATE TABLE dbo._ptHostInf(")
-                .AddMultiLineText(strSQL, "HostID varchar(32) NOT NULL", 1)
-                .AddMultiLineText(strSQL, ",HostName varchar(256) NOT NULL", 1)
+                .AddMultiLineText(strSQL, "HostID char(32) NOT NULL", 1)
+                .AddMultiLineText(strSQL, ",HostName nvarchar(512) NOT NULL", 1)
                 .AddMultiLineText(strSQL, ",HostMainIp varchar(30) NOT NULL", 1)
                 .AddMultiLineText(strSQL, ",IsUse bit NOT NULL", 1)
-                .AddMultiLineText(strSQL, ",HostDesc varchar(1024) NOT NULL DEFAULT ('')", 1)
+                .AddMultiLineText(strSQL, ",HostDesc nvarchar(1024) NOT NULL DEFAULT ('')", 1)
                 .AddMultiLineText(strSQL, ",CreateTime datetime  DEFAULT (getdate())", 1)
                 .AddMultiLineText(strSQL, ",UpdateTime datetime NOT NULL DEFAULT (getdate())", 1)
                 .AddMultiLineText(strSQL, ",ScanStatus int NOT NULL", 1)
-                .AddMultiLineText(strSQL, ",StaticInf varchar(8000) NOT NULL DEFAULT('')", 1)
-                .AddMultiLineText(strSQL, ",ActiveInf varchar(max) NOT NULL DEFAULT('')", 1)
                 .AddMultiLineText(strSQL, ",ScanBeginTime datetime ", 1)
                 .AddMultiLineText(strSQL, ",ScanEndTime datetime ", 1)
                 .AddMultiLineText(strSQL, ",ActiveTime datetime ", 1)
@@ -407,7 +287,7 @@ Public Class SeowHostApp
             strStepName = "New CmdSQLSrvText"
             Dim oCmdSQLSrvText As New CmdSQLSrvText(strSQL)
             With oCmdSQLSrvText
-                .ActiveConnection = Me.mConnSQLSrv.Connection
+                .ActiveConnection = Me.fConnSQLSrv.Connection
                 strStepName = "ExecuteNonQuery"
                 strRet = .ExecuteNonQuery()
                 If strRet <> "OK" Then
@@ -459,8 +339,8 @@ Public Class SeowHostApp
             If InObj.IsUpdate("UpdateTime") = True Then strUpdCols &= ",UpdateTime=@UpdateTime"
             If InObj.IsUpdate("IsUse") = True Then strUpdCols &= ",IsUse=@IsUse"
             If InObj.IsUpdate("ScanStatus") = True Then strUpdCols &= ",ScanStatus=@ScanStatus"
-            If InObj.IsUpdate("StaticInf") = True Then strUpdCols &= ",StaticInf=@StaticInf"
-            If InObj.IsUpdate("ActiveInf") = True Then strUpdCols &= ",ActiveInf=@ActiveInf"
+            'If InObj.IsUpdate("StaticInf") = True Then strUpdCols &= ",StaticInf=@StaticInf"
+            'If InObj.IsUpdate("ActiveInf") = True Then strUpdCols &= ",ActiveInf=@ActiveInf"
             If InObj.IsUpdate("ScanBeginTime") = True Then strUpdCols &= ",ScanBeginTime=@ScanBeginTime"
             If InObj.IsUpdate("ScanEndTime") = True Then strUpdCols &= ",ScanEndTime=@ScanEndTime"
             If InObj.IsUpdate("ActiveTime") = True Then strUpdCols &= ",ActiveTime=@ActiveTime"
@@ -470,18 +350,18 @@ Public Class SeowHostApp
             LOG.StepName = "New CmdSQLSrvText"
             Dim oCmdSQLSrvText As New CmdSQLSrvText(strSQL)
             With oCmdSQLSrvText
-                .AddPara("@FolderID", Data.SqlDbType.VarChar, 32)
+                .AddPara("@FolderID", Data.SqlDbType.Char, 32)
                 .ParaValue("@FolderID") = InObj.FolderID
                 If InObj.IsUpdate("HostID") = True Then
-                    .AddPara("@HostID", Data.SqlDbType.VarChar, 64)
+                    .AddPara("@HostID", Data.SqlDbType.Char, 32)
                     .ParaValue("@HostID") = InObj.HostID
                 End If
                 If InObj.IsUpdate("FolderName") = True Then
-                    .AddPara("@FolderName", Data.SqlDbType.VarChar, 256)
+                    .AddPara("@FolderName", Data.SqlDbType.NVarChar, 512)
                     .ParaValue("@FolderName") = InObj.FolderName
                 End If
                 If InObj.IsUpdate("FolderPath") = True Then
-                    .AddPara("@FolderPath", Data.SqlDbType.VarChar, 2048)
+                    .AddPara("@FolderPath", Data.SqlDbType.NVarChar, 4000)
                     .ParaValue("@FolderPath") = InObj.FolderPath
                 End If
                 If InObj.IsUpdate("FolderType") = True Then
@@ -489,7 +369,7 @@ Public Class SeowHostApp
                     .ParaValue("@FolderType") = InObj.FolderType
                 End If
                 If InObj.IsUpdate("FolderDesc") = True Then
-                    .AddPara("@FolderDesc", Data.SqlDbType.VarChar, 512)
+                    .AddPara("@FolderDesc", Data.SqlDbType.NVarChar, 512)
                     .ParaValue("@FolderDesc") = InObj.FolderDesc
                 End If
                 If InObj.IsUpdate("CreateTime") = True Then
@@ -508,14 +388,14 @@ Public Class SeowHostApp
                     .AddPara("@ScanStatus", Data.SqlDbType.Int)
                     .ParaValue("@ScanStatus") = InObj.ScanStatus
                 End If
-                If InObj.IsUpdate("StaticInf") = True Then
-                    .AddPara("@StaticInf", Data.SqlDbType.VarChar, 8000)
-                    .ParaValue("@StaticInf") = InObj.StaticInf
-                End If
-                If InObj.IsUpdate("ActiveInf") = True Then
-                    .AddPara("@ActiveInf", Data.SqlDbType.VarChar, 8000)
-                    .ParaValue("@ActiveInf") = InObj.ActiveInf
-                End If
+                'If InObj.IsUpdate("StaticInf") = True Then
+                '    .AddPara("@StaticInf", Data.SqlDbType.VarChar, 8000)
+                '    .ParaValue("@StaticInf") = InObj.StaticInf
+                'End If
+                'If InObj.IsUpdate("ActiveInf") = True Then
+                '    .AddPara("@ActiveInf", Data.SqlDbType.VarChar, 8000)
+                '    .ParaValue("@ActiveInf") = InObj.ActiveInf
+                'End If
                 If InObj.IsUpdate("ScanBeginTime") = True Then
                     .AddPara("@ScanBeginTime", Data.SqlDbType.DateTime)
                     .ParaValue("@ScanBeginTime") = InObj.ScanBeginTime
@@ -553,7 +433,7 @@ Public Class SeowHostApp
             LOG.StepName = "New CmdSQLSrvText"
             Dim oCmdSQLSrvText As New CmdSQLSrvText(strSQL)
             With oCmdSQLSrvText
-                .AddPara("@FolderID", Data.SqlDbType.VarChar, 32)
+                .AddPara("@FolderID", Data.SqlDbType.Char, 32)
                 .ParaValue("@FolderID") = InHostFolder.FolderID
             End With
             Dim rsMain As Recordset = Nothing
@@ -594,7 +474,7 @@ Public Class SeowHostApp
             LOG.StepName = "New CmdSQLSrvText"
             oCmdSQLSrvText = New CmdSQLSrvText(strSQL)
             With oCmdSQLSrvText
-                .AddPara("@FolderID", Data.SqlDbType.VarChar, 32)
+                .AddPara("@FolderID", Data.SqlDbType.Char, 32)
                 .ParaValue("@FolderID") = InHostFolder.FolderID
             End With
             LOG.StepName = "mExecCmdSQLSrvSp"
@@ -676,13 +556,13 @@ Public Class SeowHostApp
     Private Function mExecCmdSQLSrvText(InCmdSQLSrvText As CmdSQLSrvText, ByRef RsOut As Recordset, Optional IsTxRes As Boolean = True, Optional IsRefLastExec As Boolean = True, Optional IsAllowEOF As Boolean = False, Optional IsNextRecordset As Boolean = False) As String
         Dim LOG As New PigStepLog("mExecCmdSQLSrvText")
         Try
-            If Me.mConnSQLSrv.IsDBConnReady = False Then
+            If Me.fConnSQLSrv.IsDBConnReady = False Then
                 LOG.StepName = "OpenOrKeepActive"
-                Me.mConnSQLSrv.OpenOrKeepActive()
-                If Me.mConnSQLSrv.LastErr <> "" Then Throw New Exception(Me.mConnSQLSrv.LastErr)
+                Me.fConnSQLSrv.OpenOrKeepActive()
+                If Me.fConnSQLSrv.LastErr <> "" Then Throw New Exception(Me.fConnSQLSrv.LastErr)
             End If
             LOG.StepName = "ActiveConnection"
-            InCmdSQLSrvText.ActiveConnection = Me.mConnSQLSrv.Connection
+            InCmdSQLSrvText.ActiveConnection = Me.fConnSQLSrv.Connection
             LOG.StepName = "Execute"
             Me.PrintDebugLog(LOG.SubName, LOG.StepName, InCmdSQLSrvText.DebugStr)
             Dim rsMain As Recordset = InCmdSQLSrvText.Execute()
@@ -735,8 +615,8 @@ Public Class SeowHostApp
             LOG.StepName = "ExecuteNonQuery"
             oCmdSQLSrvText = New CmdSQLSrvText(strSQL)
             With oCmdSQLSrvText
-                .ActiveConnection = Me.mConnSQLSrv.Connection
-                .AddPara("@DirID", Data.SqlDbType.VarChar, 32)
+                .ActiveConnection = Me.fConnSQLSrv.Connection
+                .AddPara("@DirID", Data.SqlDbType.Char, 32)
                 For Each oHostDir As HostDir In InHostFolder.HostDirs
                     If oHostDir.IsDel = True Then
                         .ParaValue("@DirID") = oHostDir.DirID
@@ -785,13 +665,13 @@ Public Class SeowHostApp
             LOG.StepName = "ExecuteNonQuery"
             oCmdSQLSrvText = New CmdSQLSrvText(strSQL)
             With oCmdSQLSrvText
-                .ActiveConnection = Me.mConnSQLSrv.Connection
-                .AddPara("@DirID", Data.SqlDbType.VarChar, 32)
-                .AddPara("@FolderID", Data.SqlDbType.VarChar, 32)
+                .ActiveConnection = Me.fConnSQLSrv.Connection
+                .AddPara("@DirID", Data.SqlDbType.Char, 32)
+                .AddPara("@FolderID", Data.SqlDbType.Char, 32)
                 .AddPara("@DirPath", Data.SqlDbType.VarChar, 4096)
                 .AddPara("@DirSize", Data.SqlDbType.Money)
                 .AddPara("@DirFiles", Data.SqlDbType.Int)
-                .AddPara("@FastPigMD5", Data.SqlDbType.VarChar, 32)
+                .AddPara("@FastPigMD5", Data.SqlDbType.Char, 32)
                 .AddPara("@DirUpdateTime", Data.SqlDbType.DateTime)
                 .AddPara("@MaxFileUpdateTime", Data.SqlDbType.DateTime)
                 .AddPara("@AvgFileUpdateTime", Data.SqlDbType.DateTime)
@@ -834,11 +714,11 @@ Public Class SeowHostApp
                 strSQL = ""
                 .AddMultiLineText(strSQL, "IF EXISTS(SELECT 1 FROM sysobjects WHERE name='" & strTmpTabName & "' AND xtype='U') DROP TABLE dbo." & strTmpTabName)
                 .AddMultiLineText(strSQL, "CREATE TABLE dbo." & strTmpTabName & "(")
-                .AddMultiLineText(strSQL, "DirID varchar(32) NOT NULL", 1)
-                .AddMultiLineText(strSQL, ",DirPath varchar(4096) NOT NULL", 1)
+                .AddMultiLineText(strSQL, "DirID char(32) NOT NULL", 1)
+                .AddMultiLineText(strSQL, ",DirPath nvarchar(4000) NOT NULL", 1)
                 .AddMultiLineText(strSQL, ",DirSize money NOT NULL", 1)
                 .AddMultiLineText(strSQL, ",DirFiles int NOT NULL", 1)
-                .AddMultiLineText(strSQL, ",FastPigMD5 varchar(32) NOT NULL", 1)
+                .AddMultiLineText(strSQL, ",FastPigMD5 char(32) NOT NULL", 1)
                 .AddMultiLineText(strSQL, ",DirUpdateTime datetime NOT NULL", 1)
                 .AddMultiLineText(strSQL, "CONSTRAINT PK_" & strTmpTabName & " PRIMARY KEY CLUSTERED(DirPath)", 1)
                 .AddMultiLineText(strSQL, ")")
@@ -847,7 +727,7 @@ Public Class SeowHostApp
             Dim oCmdSQLSrvText As CmdSQLSrvText
             oCmdSQLSrvText = New CmdSQLSrvText(strSQL)
             With oCmdSQLSrvText
-                .ActiveConnection = Me.mConnSQLSrv.Connection
+                .ActiveConnection = Me.fConnSQLSrv.Connection
                 Me.PrintDebugLog(LOG.StepLogInf, .DebugStr)
                 LOG.Ret = .ExecuteNonQuery()
                 If LOG.Ret <> "OK" Then Throw New Exception(LOG.Ret)
@@ -857,13 +737,13 @@ Public Class SeowHostApp
             LOG.StepName = "ExecuteNonQuery"
             oCmdSQLSrvText = New CmdSQLSrvText(strSQL)
             With oCmdSQLSrvText
-                .AddPara("@DirID", Data.SqlDbType.VarChar, 32)
+                .AddPara("@DirID", Data.SqlDbType.Char, 32)
                 .AddPara("@DirPath", Data.SqlDbType.VarChar, 4096)
                 .AddPara("@DirSize", Data.SqlDbType.Money)
                 .AddPara("@DirFiles", Data.SqlDbType.Int)
-                .AddPara("@FastPigMD5", Data.SqlDbType.VarChar, 32)
+                .AddPara("@FastPigMD5", Data.SqlDbType.Char, 32)
                 .AddPara("@DirUpdateTime", Data.SqlDbType.DateTime)
-                .ActiveConnection = Me.mConnSQLSrv.Connection
+                .ActiveConnection = Me.fConnSQLSrv.Connection
                 Me.PrintDebugLog(LOG.StepLogInf, .DebugStr)
             End With
             For Each oHostDir As HostDir In InHostFolder.HostDirs
@@ -915,10 +795,10 @@ Public Class SeowHostApp
             LOG.StepName = "ExecuteNonQuery"
             oCmdSQLSrvText = New CmdSQLSrvText(strSQL)
             With oCmdSQLSrvText
-                .AddPara("@FolderID", Data.SqlDbType.VarChar, 32)
+                .AddPara("@FolderID", Data.SqlDbType.Char, 32)
                 .ParaValue("@FolderID") = InHostFolder.FolderID
                 Me.PrintDebugLog(LOG.StepLogInf, .DebugStr)
-                .ActiveConnection = Me.mConnSQLSrv.Connection
+                .ActiveConnection = Me.fConnSQLSrv.Connection
                 LOG.Ret = .ExecuteNonQuery
                 If LOG.Ret <> "OK" Then Throw New Exception(LOG.Ret)
             End With
@@ -938,7 +818,7 @@ Public Class SeowHostApp
             LOG.StepName = "New CmdSQLSrvText"
             Dim oCmdSQLSrvText As New CmdSQLSrvText(strSQL)
             With oCmdSQLSrvText
-                .AddPara("@FolderID", Data.SqlDbType.VarChar, 32)
+                .AddPara("@FolderID", Data.SqlDbType.Char, 32)
                 .ParaValue("@FolderID") = InHostFolder.FolderID
             End With
             Dim rsMain As Recordset = Nothing
@@ -1020,7 +900,7 @@ Public Class SeowHostApp
             If InObj.FolderPath = "" Then Throw New Exception("No folder absolute path specified")
             If InObj.FolderID = "" Then Throw New Exception("Unable to get folder ID")
             With Me.mPigFunc
-                .AddMultiLineText(strSQL, "DECLARE @ExistsFolderPath varchar(2048)")
+                .AddMultiLineText(strSQL, "DECLARE @ExistsFolderPath nvarchar(4000)")
                 .AddMultiLineText(strSQL, "IF EXISTS(SELECT 1 FROM dbo._ptHFFolderInf WHERE FolderID=@FolderID)")
                 .AddMultiLineText(strSQL, "SELECT 'Folder ID already exists'", 1)
                 .AddMultiLineText(strSQL, "ELSE IF EXISTS(SELECT 1 FROM dbo._ptHFFolderInf WHERE HostID=@HostID AND FolderPath=@FolderPath)")
@@ -1029,32 +909,32 @@ Public Class SeowHostApp
                 .AddMultiLineText(strSQL, "SELECT TOP 1 'There is a defined top-level folder named '+FolderPath FROM _ptHFFolderInf p WHERE LEFT(@FolderPath,LEN(p.FolderPath))=p.FolderPath AND p.IsUse=1 AND HostID=@HostID", 1)
                 .AddMultiLineText(strSQL, "ELSE")
                 .AddMultiLineText(strSQL, "BEGIN")
-                .AddMultiLineText(strSQL, "INSERT INTO dbo._ptHFFolderInf(FolderID,HostID,FolderName,FolderPath,FolderType,FolderDesc,IsUse,ScanStatus,StaticInf)", 1)
-                .AddMultiLineText(strSQL, "VALUES(@FolderID,@HostID,@FolderName,@FolderPath,@FolderType,@FolderDesc,@IsUse,@ScanStatus,@StaticInf)", 1)
+                .AddMultiLineText(strSQL, "INSERT INTO dbo._ptHFFolderInf(FolderID,HostID,FolderName,FolderPath,FolderType,FolderDesc,IsUse,ScanStatus)", 1)
+                .AddMultiLineText(strSQL, "VALUES(@FolderID,@HostID,@FolderName,@FolderPath,@FolderType,@FolderDesc,@IsUse,@ScanStatus)", 1)
                 .AddMultiLineText(strSQL, "SELECT 'OK'", 1)
                 .AddMultiLineText(strSQL, "END")
             End With
             LOG.StepName = "New CmdSQLSrvText"
             Dim oCmdSQLSrvText As New CmdSQLSrvText(strSQL)
             With oCmdSQLSrvText
-                .AddPara("@FolderID", Data.SqlDbType.VarChar, 32)
+                .AddPara("@FolderID", Data.SqlDbType.Char, 32)
                 .ParaValue("@FolderID") = InObj.FolderID
-                .AddPara("@HostID", Data.SqlDbType.VarChar, 64)
+                .AddPara("@HostID", Data.SqlDbType.Char, 32)
                 .ParaValue("@HostID") = InObj.HostID
-                .AddPara("@FolderName", Data.SqlDbType.VarChar, 256)
+                .AddPara("@FolderName", Data.SqlDbType.NVarChar, 512)
                 .ParaValue("@FolderName") = InObj.FolderName
-                .AddPara("@FolderPath", Data.SqlDbType.VarChar, 2048)
+                .AddPara("@FolderPath", Data.SqlDbType.NVarChar, 4000)
                 .ParaValue("@FolderPath") = InObj.FolderPath
                 .AddPara("@FolderType", Data.SqlDbType.Int)
                 .ParaValue("@FolderType") = InObj.FolderType
-                .AddPara("@FolderDesc", Data.SqlDbType.VarChar, 512)
+                .AddPara("@FolderDesc", Data.SqlDbType.NVarChar, 512)
                 .ParaValue("@FolderDesc") = InObj.FolderDesc
                 .AddPara("@IsUse", Data.SqlDbType.Bit)
                 .ParaValue("@IsUse") = InObj.IsUse
                 .AddPara("@ScanStatus", Data.SqlDbType.Int)
                 .ParaValue("@ScanStatus") = InObj.ScanStatus
-                .AddPara("@StaticInf", Data.SqlDbType.VarChar, 8000)
-                .ParaValue("@StaticInf") = InObj.StaticInf
+                '.AddPara("@StaticInf", Data.SqlDbType.VarChar, 8000)
+                '.ParaValue("@StaticInf") = InObj.StaticInf
             End With
             Dim rsMain As Recordset = Nothing
             LOG.StepName = "mExecCmdSQLSrvSp"
@@ -1095,7 +975,7 @@ Public Class SeowHostApp
             LOG.StepName = "New CmdSQLSrvText"
             Dim oCmdSQLSrvText As New CmdSQLSrvText(strSQL)
             With oCmdSQLSrvText
-                .AddPara("@HostID", SqlDbType.VarChar, 32)
+                .AddPara("@HostID", SqlDbType.Char, 32)
                 .ParaValue("@HostID") = InHost.HostID
             End With
             Dim rsMain As Recordset = Nothing
@@ -1212,7 +1092,7 @@ Public Class SeowHostApp
             If IsMyHostOnly = True Then strSQL &= " WHERE HostID=@HostID"
             Dim oCmdSQLSrvText As New CmdSQLSrvText(strSQL)
             With oCmdSQLSrvText
-                .AddPara("@HostID", SqlDbType.VarChar, 32)
+                .AddPara("@HostID", SqlDbType.Char, 32)
                 .ParaValue("@HostID") = Me.mMyHostID
             End With
             Dim rsMain As Recordset = Nothing
@@ -1249,24 +1129,176 @@ Public Class SeowHostApp
         End Try
     End Function
 
-    Private Function mCreateTable_HostConfInf() As String
-        Dim LOG As New PigStepLog("mCreateTable_HostConfInf")
+    Private Function mCreateTable_LargeExtInf() As String
+        Dim LOG As New PigStepLog("mCreateTable_LargeExtInf")
         Dim strSQL As String = ""
         Try
             With Me.mPigFunc
-                .AddMultiLineText(strSQL, "CREATE TABLE	dbo._ptHostConfInf(")
-                .AddMultiLineText(strSQL, "ConfID varchar(64) NOT NULL", 1)
-                .AddMultiLineText(strSQL, ",ConfValue varchar(8000) NOT NULL", 1)
-                .AddMultiLineText(strSQL, ",CodeDesc varchar(512) NOT NULL DEFAULT('')", 1)
+                .AddMultiLineText(strSQL, "CREATE TABLE	dbo._ptLargeExtInf(")
+                .AddMultiLineText(strSQL, "LargeExtID char(32) NOT NULL", 1)
+                .AddMultiLineText(strSQL, ",LargeExtValue nvarchar(max) NOT NULL", 1)
                 .AddMultiLineText(strSQL, ",CreateTime datetime NOT NULL DEFAULT(GetDate())", 1)
                 .AddMultiLineText(strSQL, ",UpdateTime datetime NULL", 1)
-                .AddMultiLineText(strSQL, "CONSTRAINT PK_ptHostConfInf PRIMARY KEY CLUSTERED(ConfID)", 1)
+                .AddMultiLineText(strSQL, "CONSTRAINT PK_ptLargeExtInf PRIMARY KEY CLUSTERED(LargeExtID)", 1)
                 .AddMultiLineText(strSQL, ")")
             End With
             LOG.StepName = "New CmdSQLSrvText"
             Dim oCmdSQLSrvText As New CmdSQLSrvText(strSQL)
             With oCmdSQLSrvText
-                .ActiveConnection = Me.mConnSQLSrv.Connection
+                .ActiveConnection = Me.fConnSQLSrv.Connection
+                LOG.StepName = "ExecuteNonQuery"
+                LOG.Ret = .ExecuteNonQuery()
+                If LOG.Ret <> "OK" Then
+                    Me.PrintDebugLog(LOG.SubName, LOG.StepLogInf)
+                    Throw New Exception(LOG.Ret)
+                End If
+            End With
+            Return "OK"
+        Catch ex As Exception
+            Me.fPrintErrLogInf(strSQL)
+            Return Me.GetSubErrInf(LOG.SubName, LOG.StepName, ex)
+        End Try
+    End Function
+
+    Private Function mCreateTable_HostExtInf() As String
+        Dim LOG As New PigStepLog("mCreateTable_HostConfInf")
+        Dim strSQL As String = ""
+        Try
+            With Me.mPigFunc
+                .AddMultiLineText(strSQL, "CREATE TABLE	dbo._ptHostExtInf(")
+                .AddMultiLineText(strSQL, "HostID char(32) NOT NULL", 1)
+                .AddMultiLineText(strSQL, ",ExtKey nvarchar(128) NOT NULL", 1)
+                .AddMultiLineText(strSQL, ",ExtValue nvarchar(768)", 1)
+                .AddMultiLineText(strSQL, ",LargeExtID char(32)", 1)
+                .AddMultiLineText(strSQL, ",CodeDesc nvarchar(512) NOT NULL DEFAULT('')", 1)
+                .AddMultiLineText(strSQL, ",CreateTime datetime NOT NULL DEFAULT(GetDate())", 1)
+                .AddMultiLineText(strSQL, ",UpdateTime datetime NULL", 1)
+                .AddMultiLineText(strSQL, "CONSTRAINT PK_ptHostExtInf PRIMARY KEY CLUSTERED(HostID,ExtKey)", 1)
+                .AddMultiLineText(strSQL, ")")
+                .AddMultiLineText(strSQL, "ALTER TABLE dbo._ptHostExtInf WITH CHECK ADD CONSTRAINT FK_ptHostExtInf_ptHostInf FOREIGN KEY(HostID) REFERENCES _ptHostInf(HostID)")
+                .AddMultiLineText(strSQL, "ALTER TABLE dbo._ptHostExtInf CHECK CONSTRAINT FK_ptHostExtInf_ptHostInf")
+                .AddMultiLineText(strSQL, "ALTER TABLE dbo._ptHostExtInf WITH CHECK ADD CONSTRAINT FK_ptHostExtInf_ptLargeExtInf FOREIGN KEY(LargeExtID) REFERENCES _ptLargeExtInf(LargeExtID)")
+                .AddMultiLineText(strSQL, "ALTER TABLE dbo._ptHostExtInf CHECK CONSTRAINT FK_ptHostExtInf_ptLargeExtInf")
+            End With
+            LOG.StepName = "New CmdSQLSrvText"
+            Dim oCmdSQLSrvText As New CmdSQLSrvText(strSQL)
+            With oCmdSQLSrvText
+                .ActiveConnection = Me.fConnSQLSrv.Connection
+                LOG.StepName = "ExecuteNonQuery"
+                LOG.Ret = .ExecuteNonQuery()
+                If LOG.Ret <> "OK" Then
+                    Me.PrintDebugLog(LOG.SubName, LOG.StepLogInf)
+                    Throw New Exception(LOG.Ret)
+                End If
+            End With
+            Return "OK"
+        Catch ex As Exception
+            Me.fPrintErrLogInf(strSQL)
+            Return Me.GetSubErrInf(LOG.SubName, LOG.StepName, ex)
+        End Try
+    End Function
+
+
+    Private Function mCreateTable_HFFolderExtInf() As String
+        Dim LOG As New PigStepLog("mCreateTable_HFFolderExtInf")
+        Dim strSQL As String = ""
+        Try
+            With Me.mPigFunc
+                .AddMultiLineText(strSQL, "CREATE TABLE	dbo._ptHFFolderExtInf(")
+                .AddMultiLineText(strSQL, "FolderID char(32) NOT NULL", 1)
+                .AddMultiLineText(strSQL, ",ExtKey nvarchar(128) NOT NULL", 1)
+                .AddMultiLineText(strSQL, ",ExtValue nvarchar(768)", 1)
+                .AddMultiLineText(strSQL, ",LargeExtID char(32)", 1)
+                .AddMultiLineText(strSQL, ",CodeDesc nvarchar(512) NOT NULL DEFAULT('')", 1)
+                .AddMultiLineText(strSQL, ",CreateTime datetime NOT NULL DEFAULT(GetDate())", 1)
+                .AddMultiLineText(strSQL, ",UpdateTime datetime NULL", 1)
+                .AddMultiLineText(strSQL, "CONSTRAINT PK_ptHFFolderExtInf PRIMARY KEY CLUSTERED(FolderID,ExtKey)", 1)
+                .AddMultiLineText(strSQL, ")")
+                .AddMultiLineText(strSQL, "ALTER TABLE dbo._ptHFFolderExtInf WITH CHECK ADD CONSTRAINT FK_ptHFFolderExtInf_ptHFFolderInf FOREIGN KEY(FolderID) REFERENCES _ptHFFolderInf(FolderID)")
+                .AddMultiLineText(strSQL, "ALTER TABLE dbo._ptHFFolderExtInf CHECK CONSTRAINT FK_ptHFFolderExtInf_ptHFFolderInf")
+                .AddMultiLineText(strSQL, "ALTER TABLE dbo._ptHFFolderExtInf WITH CHECK ADD CONSTRAINT FK_ptHFFolderExtInf_ptLargeExtInf FOREIGN KEY(LargeExtID) REFERENCES _ptLargeExtInf(LargeExtID)")
+                .AddMultiLineText(strSQL, "ALTER TABLE dbo._ptHFFolderExtInf CHECK CONSTRAINT FK_ptHFFolderExtInf_ptLargeExtInf")
+            End With
+            LOG.StepName = "New CmdSQLSrvText"
+            Dim oCmdSQLSrvText As New CmdSQLSrvText(strSQL)
+            With oCmdSQLSrvText
+                .ActiveConnection = Me.fConnSQLSrv.Connection
+                LOG.StepName = "ExecuteNonQuery"
+                LOG.Ret = .ExecuteNonQuery()
+                If LOG.Ret <> "OK" Then
+                    Me.PrintDebugLog(LOG.SubName, LOG.StepLogInf)
+                    Throw New Exception(LOG.Ret)
+                End If
+            End With
+            Return "OK"
+        Catch ex As Exception
+            Me.fPrintErrLogInf(strSQL)
+            Return Me.GetSubErrInf(LOG.SubName, LOG.StepName, ex)
+        End Try
+    End Function
+
+    Private Function mCreateTable_HFDirExtInf() As String
+        Dim LOG As New PigStepLog("mCreateTable_HFDirExtInf")
+        Dim strSQL As String = ""
+        Try
+            With Me.mPigFunc
+                .AddMultiLineText(strSQL, "CREATE TABLE	dbo._ptHFDirExtInf(")
+                .AddMultiLineText(strSQL, "DirID char(32) NOT NULL", 1)
+                .AddMultiLineText(strSQL, ",ExtKey nvarchar(128) NOT NULL", 1)
+                .AddMultiLineText(strSQL, ",ExtValue nvarchar(768)", 1)
+                .AddMultiLineText(strSQL, ",LargeExtID char(32)", 1)
+                .AddMultiLineText(strSQL, ",CodeDesc nvarchar(512) NOT NULL DEFAULT('')", 1)
+                .AddMultiLineText(strSQL, ",CreateTime datetime NOT NULL DEFAULT(GetDate())", 1)
+                .AddMultiLineText(strSQL, ",UpdateTime datetime NULL", 1)
+                .AddMultiLineText(strSQL, "CONSTRAINT PK_ptHFDirExtInf PRIMARY KEY CLUSTERED(DirID,ExtKey)", 1)
+                .AddMultiLineText(strSQL, ")")
+                .AddMultiLineText(strSQL, "ALTER TABLE dbo._ptHFDirExtInf WITH CHECK ADD CONSTRAINT FK_ptHFDirExtInf_ptHFDirInf FOREIGN KEY(DirID) REFERENCES _ptHFDirInf(DirID)")
+                .AddMultiLineText(strSQL, "ALTER TABLE dbo._ptHFDirExtInf CHECK CONSTRAINT FK_ptHFDirExtInf_ptHFDirInf")
+                .AddMultiLineText(strSQL, "ALTER TABLE dbo._ptHFDirExtInf WITH CHECK ADD CONSTRAINT FK_ptHFDirExtInf_ptLargeExtInf FOREIGN KEY(LargeExtID) REFERENCES _ptLargeExtInf(LargeExtID)")
+                .AddMultiLineText(strSQL, "ALTER TABLE dbo._ptHFDirExtInf CHECK CONSTRAINT FK_ptHFDirExtInf_ptLargeExtInf")
+            End With
+            LOG.StepName = "New CmdSQLSrvText"
+            Dim oCmdSQLSrvText As New CmdSQLSrvText(strSQL)
+            With oCmdSQLSrvText
+                .ActiveConnection = Me.fConnSQLSrv.Connection
+                LOG.StepName = "ExecuteNonQuery"
+                LOG.Ret = .ExecuteNonQuery()
+                If LOG.Ret <> "OK" Then
+                    Me.PrintDebugLog(LOG.SubName, LOG.StepLogInf)
+                    Throw New Exception(LOG.Ret)
+                End If
+            End With
+            Return "OK"
+        Catch ex As Exception
+            Me.fPrintErrLogInf(strSQL)
+            Return Me.GetSubErrInf(LOG.SubName, LOG.StepName, ex)
+        End Try
+    End Function
+
+    Private Function mCreateTable_HFFileExtInf() As String
+        Dim LOG As New PigStepLog("mCreateTable_HFFileExtInf")
+        Dim strSQL As String = ""
+        Try
+            With Me.mPigFunc
+                .AddMultiLineText(strSQL, "CREATE TABLE	dbo._ptHFFileExtInf(")
+                .AddMultiLineText(strSQL, "FileID char(36) NOT NULL", 1)
+                .AddMultiLineText(strSQL, ",ExtKey nvarchar(128) NOT NULL", 1)
+                .AddMultiLineText(strSQL, ",ExtValue nvarchar(768)", 1)
+                .AddMultiLineText(strSQL, ",LargeExtID char(32)", 1)
+                .AddMultiLineText(strSQL, ",CodeDesc nvarchar(512) NOT NULL DEFAULT('')", 1)
+                .AddMultiLineText(strSQL, ",CreateTime datetime NOT NULL DEFAULT(GetDate())", 1)
+                .AddMultiLineText(strSQL, ",UpdateTime datetime NULL", 1)
+                .AddMultiLineText(strSQL, "CONSTRAINT PK_ptHFFileExtInf PRIMARY KEY CLUSTERED(FileID,ExtKey)", 1)
+                .AddMultiLineText(strSQL, ")")
+                .AddMultiLineText(strSQL, "ALTER TABLE dbo._ptHFFileExtInf WITH CHECK ADD CONSTRAINT FK_ptHFFileExtInf_ptHFFileInf FOREIGN KEY(FileID) REFERENCES _ptHFFileInf(FileID)")
+                .AddMultiLineText(strSQL, "ALTER TABLE dbo._ptHFFileExtInf CHECK CONSTRAINT FK_ptHFFileExtInf_ptHFFileInf")
+                .AddMultiLineText(strSQL, "ALTER TABLE dbo._ptHFFileExtInf WITH CHECK ADD CONSTRAINT FK_ptHFFileExtInf_ptLargeExtInf FOREIGN KEY(LargeExtID) REFERENCES _ptLargeExtInf(LargeExtID)")
+                .AddMultiLineText(strSQL, "ALTER TABLE dbo._ptHFFileExtInf CHECK CONSTRAINT FK_ptHFFileExtInf_ptLargeExtInf")
+            End With
+            LOG.StepName = "New CmdSQLSrvText"
+            Dim oCmdSQLSrvText As New CmdSQLSrvText(strSQL)
+            With oCmdSQLSrvText
+                .ActiveConnection = Me.fConnSQLSrv.Connection
                 LOG.StepName = "ExecuteNonQuery"
                 LOG.Ret = .ExecuteNonQuery()
                 If LOG.Ret <> "OK" Then
@@ -1287,7 +1319,7 @@ Public Class SeowHostApp
         Try
             With Me.mPigFunc
                 .AddMultiLineText(strSQL, "CREATE TABLE	dbo._ptHFContInf(")
-                .AddMultiLineText(strSQL, "FileContID varchar(32) NOT NULL", 1) '文件的FullPigMD5
+                .AddMultiLineText(strSQL, "FileContID char(32) NOT NULL", 1) '文件的FullPigMD5
                 .AddMultiLineText(strSQL, ",FileSize bigint NOT NULL", 1)
                 .AddMultiLineText(strSQL, ",ContStatus int NOT NULL", 1)
                 .AddMultiLineText(strSQL, ",SegContType int", 1)
@@ -1300,7 +1332,7 @@ Public Class SeowHostApp
             LOG.StepName = "New CmdSQLSrvText"
             Dim oCmdSQLSrvText As New CmdSQLSrvText(strSQL)
             With oCmdSQLSrvText
-                .ActiveConnection = Me.mConnSQLSrv.Connection
+                .ActiveConnection = Me.fConnSQLSrv.Connection
                 LOG.StepName = "ExecuteNonQuery"
                 LOG.Ret = .ExecuteNonQuery()
                 If LOG.Ret <> "OK" Then
@@ -1321,22 +1353,20 @@ Public Class SeowHostApp
         Try
             With Me.mPigFunc
                 .AddMultiLineText(strSQL, "CREATE TABLE	dbo._ptHFContSegInf(")
-                .AddMultiLineText(strSQL, "FileContID varchar(32) NOT NULL", 1)
+                .AddMultiLineText(strSQL, "FileContID char(32) NOT NULL", 1)
                 .AddMultiLineText(strSQL, ",SegNo int NOT NULL", 1)
-                .AddMultiLineText(strSQL, ",SegCont varchar(max) NOT NULL", 1)
+                .AddMultiLineText(strSQL, ",SegCont varbinary(8000) NOT NULL", 1)
                 .AddMultiLineText(strSQL, ",CreateTime datetime NOT NULL DEFAULT(GetDate())", 1)
+                .AddMultiLineText(strSQL, ",UpdateTime datetime NULL", 1)
                 .AddMultiLineText(strSQL, "CONSTRAINT PK_HFContSegInf PRIMARY KEY CLUSTERED(FileContID,SegNo)", 1)
                 .AddMultiLineText(strSQL, ")")
                 .AddMultiLineText(strSQL, "ALTER TABLE dbo._ptHFContSegInf WITH CHECK ADD CONSTRAINT FK_HFContSegInf_ptHFContInf FOREIGN KEY(FileContID) REFERENCES _ptHFContInf(FileContID)")
                 .AddMultiLineText(strSQL, "ALTER TABLE dbo._ptHFContSegInf CHECK CONSTRAINT FK_HFContSegInf_ptHFContInf")
-                '.AddMultiLineText(strSQL, "ALTER TABLE dbo._ptHFContSegInf WITH CHECK ADD CONSTRAINT FK_HFContSegInf_ptHFSegInf FOREIGN KEY(ContSegID) REFERENCES _ptHFSegInf(ContSegID)")
-                '.AddMultiLineText(strSQL, "ALTER TABLE dbo._ptHFContSegInf CHECK CONSTRAINT FK_HFContSegInf_ptHFSegInf")
-                '.AddMultiLineText(strSQL, "CREATE INDEX IDX_ptHFContSegInf_FileContID ON _ptHFContSegInf(FileContID)")
             End With
             LOG.StepName = "New CmdSQLSrvText"
             Dim oCmdSQLSrvText As New CmdSQLSrvText(strSQL)
             With oCmdSQLSrvText
-                .ActiveConnection = Me.mConnSQLSrv.Connection
+                .ActiveConnection = Me.fConnSQLSrv.Connection
                 LOG.StepName = "ExecuteNonQuery"
                 LOG.Ret = .ExecuteNonQuery()
                 If LOG.Ret <> "OK" Then
@@ -1357,18 +1387,16 @@ Public Class SeowHostApp
         Try
             With Me.mPigFunc
                 .AddMultiLineText(strSQL, "CREATE TABLE	dbo._ptHFFolderInf(")
-                .AddMultiLineText(strSQL, "FolderID varchar(32) NOT NULL", 1)
-                .AddMultiLineText(strSQL, ",HostID varchar(32)", 1)
-                .AddMultiLineText(strSQL, ",FolderName varchar(256) NOT NULL", 1)
-                .AddMultiLineText(strSQL, ",FolderPath varchar(2048) NOT NULL", 1)  '绝对路径
+                .AddMultiLineText(strSQL, "FolderID char(32) NOT NULL", 1)
+                .AddMultiLineText(strSQL, ",HostID char(32)", 1)
+                .AddMultiLineText(strSQL, ",FolderName nvarchar(512) NOT NULL", 1)
+                .AddMultiLineText(strSQL, ",FolderPath nvarchar(4000) NOT NULL", 1)  '绝对路径
                 .AddMultiLineText(strSQL, ",FolderType int NOT NULL", 1)
-                .AddMultiLineText(strSQL, ",FolderDesc varchar(512) NOT NULL DEFAULT('')", 1)
+                .AddMultiLineText(strSQL, ",FolderDesc nvarchar(512) NOT NULL DEFAULT('')", 1)
                 .AddMultiLineText(strSQL, ",CreateTime datetime NOT NULL DEFAULT(GetDate())", 1)
                 .AddMultiLineText(strSQL, ",UpdateTime datetime NULL", 1)
                 .AddMultiLineText(strSQL, ",IsUse bit NOT NULL", 1)
                 .AddMultiLineText(strSQL, ",ScanStatus int NOT NULL", 1)
-                .AddMultiLineText(strSQL, ",StaticInf varchar(8000) NOT NULL DEFAULT('')", 1)
-                .AddMultiLineText(strSQL, ",ActiveInf varchar(max) NOT NULL DEFAULT('')", 1)
                 .AddMultiLineText(strSQL, ",ScanBeginTime datetime ", 1)
                 .AddMultiLineText(strSQL, ",ScanEndTime datetime ", 1)
                 .AddMultiLineText(strSQL, ",ActiveTime datetime ", 1)
@@ -1383,7 +1411,7 @@ Public Class SeowHostApp
             LOG.StepName = "New CmdSQLSrvText"
             Dim oCmdSQLSrvText As New CmdSQLSrvText(strSQL)
             With oCmdSQLSrvText
-                .ActiveConnection = Me.mConnSQLSrv.Connection
+                .ActiveConnection = Me.fConnSQLSrv.Connection
                 LOG.StepName = "ExecuteNonQuery"
                 LOG.Ret = .ExecuteNonQuery()
                 If LOG.Ret <> "OK" Then
@@ -1404,17 +1432,15 @@ Public Class SeowHostApp
         Try
             With Me.mPigFunc
                 .AddMultiLineText(strSQL, "CREATE TABLE	dbo._ptHFDirInf(")
-                .AddMultiLineText(strSQL, "DirID varchar(32) NOT NULL", 1)
-                .AddMultiLineText(strSQL, ",FolderID varchar(32) NOT NULL", 1)
-                .AddMultiLineText(strSQL, ",DirPath varchar(4096) NOT NULL", 1)
+                .AddMultiLineText(strSQL, "DirID char(32) NOT NULL", 1)
+                .AddMultiLineText(strSQL, ",FolderID char(32) NOT NULL", 1)
+                .AddMultiLineText(strSQL, ",DirPath nvarchar(4000) NOT NULL", 1)
                 .AddMultiLineText(strSQL, ",DirSize money NOT NULL", 1)
                 .AddMultiLineText(strSQL, ",DirFiles int NOT NULL", 1)
                 .AddMultiLineText(strSQL, ",DirUpdateTime datetime NOT NULL", 1)
-                .AddMultiLineText(strSQL, ",FastPigMD5 varchar(32) NOT NULL", 1)
+                .AddMultiLineText(strSQL, ",FastPigMD5 char(32) NOT NULL", 1)
                 .AddMultiLineText(strSQL, ",MaxFileUpdateTime datetime NOT NULL DEFAULT('1/1/1900')", 1)
                 .AddMultiLineText(strSQL, ",AvgFileUpdateTime datetime NOT NULL DEFAULT('1/1/1900')", 1)
-                .AddMultiLineText(strSQL, ",StaticInf varchar(8000) NOT NULL DEFAULT('')", 1)
-                .AddMultiLineText(strSQL, ",ActiveInf varchar(max) NOT NULL DEFAULT('')", 1)
                 .AddMultiLineText(strSQL, ",CreateTime datetime NOT NULL DEFAULT(GetDate())", 1)
                 .AddMultiLineText(strSQL, ",IsDel bit NOT NULL", 1)
                 .AddMultiLineText(strSQL, ",IsScan bit NOT NULL", 1)
@@ -1429,7 +1455,7 @@ Public Class SeowHostApp
             LOG.StepName = "New CmdSQLSrvText"
             Dim oCmdSQLSrvText As New CmdSQLSrvText(strSQL)
             With oCmdSQLSrvText
-                .ActiveConnection = Me.mConnSQLSrv.Connection
+                .ActiveConnection = Me.fConnSQLSrv.Connection
                 LOG.StepName = "ExecuteNonQuery"
                 LOG.Ret = .ExecuteNonQuery()
                 If LOG.Ret <> "OK" Then
@@ -1449,15 +1475,13 @@ Public Class SeowHostApp
         Try
             With Me.mPigFunc
                 .AddMultiLineText(strSQL, "CREATE TABLE	dbo._ptHFFileInf(")
-                .AddMultiLineText(strSQL, "FileID varchar(36) NOT NULL DEFAULT(newid())", 1)
-                .AddMultiLineText(strSQL, ",DirID varchar(32) NOT NULL", 1)
-                .AddMultiLineText(strSQL, ",FileName varchar(256) NOT NULL", 1)
-                .AddMultiLineText(strSQL, ",FileContID varchar(32)", 1)
+                .AddMultiLineText(strSQL, "FileID char(36) NOT NULL DEFAULT(newid())", 1)
+                .AddMultiLineText(strSQL, ",DirID char(32) NOT NULL", 1)
+                .AddMultiLineText(strSQL, ",FileName nvarchar(512) NOT NULL", 1)
+                .AddMultiLineText(strSQL, ",FileContID char(32)", 1)
                 .AddMultiLineText(strSQL, ",FileSize int NOT NULL", 1)
                 .AddMultiLineText(strSQL, ",FileUpdateTime datetime NOT NULL", 1)
-                .AddMultiLineText(strSQL, ",FastPigMD5 varchar(32) NOT NULL", 1)
-                .AddMultiLineText(strSQL, ",StaticInf varchar(8000) NOT NULL DEFAULT('')", 1)
-                .AddMultiLineText(strSQL, ",ActiveInf varchar(max) NOT NULL DEFAULT('')", 1)
+                .AddMultiLineText(strSQL, ",FastPigMD5 char(32) NOT NULL", 1)
                 .AddMultiLineText(strSQL, ",CreateTime datetime NOT NULL DEFAULT(GetDate())", 1)
                 .AddMultiLineText(strSQL, ",IsDel bit NOT NULL", 1)
                 .AddMultiLineText(strSQL, ",IsCheck bit NOT NULL", 1)
@@ -1475,7 +1499,7 @@ Public Class SeowHostApp
             LOG.StepName = "New CmdSQLSrvText"
             Dim oCmdSQLSrvText As New CmdSQLSrvText(strSQL)
             With oCmdSQLSrvText
-                .ActiveConnection = Me.mConnSQLSrv.Connection
+                .ActiveConnection = Me.fConnSQLSrv.Connection
                 LOG.StepName = "ExecuteNonQuery"
                 LOG.Ret = .ExecuteNonQuery()
                 If LOG.Ret <> "OK" Then
@@ -1537,9 +1561,9 @@ Public Class SeowHostApp
             LOG.StepName = "New CmdSQLSrvText"
             Dim oCmdSQLSrvText As New CmdSQLSrvText(strSQL)
             With oCmdSQLSrvText
-                .AddPara("@HostID", Data.SqlDbType.VarChar, 32)
+                .AddPara("@HostID", Data.SqlDbType.Char, 32)
                 .ParaValue("@HostID") = InObj.HostID
-                .AddPara("@HostName", Data.SqlDbType.VarChar, 256)
+                .AddPara("@HostName", Data.SqlDbType.NVarChar, 512)
                 .ParaValue("@HostName") = InObj.HostName
                 .AddPara("@HostMainIp", Data.SqlDbType.VarChar, 30)
                 .ParaValue("@HostMainIp") = InObj.HostMainIp
@@ -1580,10 +1604,10 @@ Public Class SeowHostApp
                 strSQL = ""
                 .AddMultiLineText(strSQL, "IF EXISTS(SELECT 1 FROM sysobjects WHERE name='" & strTmpTabName & "' AND xtype='U') DROP TABLE dbo." & strTmpTabName)
                 .AddMultiLineText(strSQL, "CREATE TABLE dbo." & strTmpTabName & "(")
-                .AddMultiLineText(strSQL, "FileID varchar(32) NOT NULL", 1)
-                .AddMultiLineText(strSQL, ",FileName varchar(256) NOT NULL", 1)
+                .AddMultiLineText(strSQL, "FileID char(32) NOT NULL", 1)
+                .AddMultiLineText(strSQL, ",FileName nvarchar(512) NOT NULL", 1)
                 .AddMultiLineText(strSQL, ",FileSize int NOT NULL", 1)
-                .AddMultiLineText(strSQL, ",FastPigMD5 varchar(32) NOT NULL", 1)
+                .AddMultiLineText(strSQL, ",FastPigMD5 char(32) NOT NULL", 1)
                 .AddMultiLineText(strSQL, ",FileUpdateTime datetime NOT NULL", 1)
                 .AddMultiLineText(strSQL, "CONSTRAINT PK_" & strTmpTabName & " PRIMARY KEY CLUSTERED(FileID)", 1)
                 .AddMultiLineText(strSQL, ")")
@@ -1592,7 +1616,7 @@ Public Class SeowHostApp
             Dim oCmdSQLSrvText As CmdSQLSrvText
             oCmdSQLSrvText = New CmdSQLSrvText(strSQL)
             With oCmdSQLSrvText
-                .ActiveConnection = Me.mConnSQLSrv.Connection
+                .ActiveConnection = Me.fConnSQLSrv.Connection
                 Me.PrintDebugLog(LOG.StepLogInf, .DebugStr)
                 LOG.Ret = .ExecuteNonQuery()
                 If LOG.Ret <> "OK" Then Throw New Exception(LOG.Ret)
@@ -1602,12 +1626,12 @@ Public Class SeowHostApp
             LOG.StepName = "ExecuteNonQuery"
             oCmdSQLSrvText = New CmdSQLSrvText(strSQL)
             With oCmdSQLSrvText
-                .AddPara("@FileID", Data.SqlDbType.VarChar, 32)
-                .AddPara("@FileName", Data.SqlDbType.VarChar, 256)
+                .AddPara("@FileID", Data.SqlDbType.Char, 32)
+                .AddPara("@FileName", Data.SqlDbType.NVarChar, 512)
                 .AddPara("@FileSize", Data.SqlDbType.Int)
-                .AddPara("@FastPigMD5", Data.SqlDbType.VarChar, 32)
+                .AddPara("@FastPigMD5", Data.SqlDbType.Char, 32)
                 .AddPara("@FileUpdateTime", Data.SqlDbType.DateTime)
-                .ActiveConnection = Me.mConnSQLSrv.Connection
+                .ActiveConnection = Me.fConnSQLSrv.Connection
                 Me.PrintDebugLog(LOG.StepLogInf, .DebugStr)
             End With
             For Each InHostFile As HostFile In InHostDir.HostFiles
@@ -1665,10 +1689,10 @@ Public Class SeowHostApp
             LOG.StepName = "ExecuteNonQuery"
             oCmdSQLSrvText = New CmdSQLSrvText(strSQL)
             With oCmdSQLSrvText
-                .AddPara("@DirID", Data.SqlDbType.VarChar, 32)
+                .AddPara("@DirID", Data.SqlDbType.Char, 32)
                 .ParaValue("@DirID") = InHostDir.DirID
                 Me.PrintDebugLog(LOG.StepLogInf, .DebugStr)
-                .ActiveConnection = Me.mConnSQLSrv.Connection
+                .ActiveConnection = Me.fConnSQLSrv.Connection
                 LOG.Ret = .ExecuteNonQuery
                 If LOG.Ret <> "OK" Then Throw New Exception(LOG.Ret)
             End With
@@ -1730,14 +1754,14 @@ Public Class SeowHostApp
             ElseIf Me.mSQLSrvTools.IsTabColExists("_ptHFDirInf", "AvgFileUpdateTime") = False Then
                 With Me.mPigFunc
                     strSQL = ""
-                    .AddMultiLineText(strSQL, "ALTER TABLE dbo._ptHFDirInf ADD AvgFileUpdateTime datetime DEFAULT('#1/1/1900#')")
+                    .AddMultiLineText(strSQL, "ALTER TABLE dbo._ptHFDirInf ADD AvgFileUpdateTime datetime DEFAULT('1/1/1900')")
                     .AddMultiLineText(strSQL, "UPDATE dbo._ptHFDirInf SET AvgFileUpdateTime='1/1/1900'")
                     .AddMultiLineText(strSQL, "ALTER TABLE dbo._ptHFDirInf ALTER COLUMN AvgFileUpdateTime datetime NOT NULL")
                 End With
                 LOG.StepName = "ExecuteNonQuery"
                 oCmdSQLSrvText = New CmdSQLSrvText(strSQL)
                 With oCmdSQLSrvText
-                    .ActiveConnection = Me.mConnSQLSrv.Connection
+                    .ActiveConnection = Me.fConnSQLSrv.Connection
                     LOG.Ret = .ExecuteNonQuery()
                     If LOG.Ret <> "OK" Then Throw New Exception(LOG.Ret)
                 End With
