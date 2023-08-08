@@ -96,8 +96,8 @@ Public Class HostFolder
 		MyBase.New(CLS_VERSION)
 		Dim strRet As String = ""
 		Try
-			strRet = Me.mGetFolderID(HostID, FolderPath, Me.FolderID)
-			If strRet <> "OK" Then Throw New Exception(strRet)
+			Me.FolderID = Parent.GetFolderID(HostID, FolderPath)
+			If Me.FolderID = "" Then Throw New Exception("Unable to obtain FolderID")
 			Me.HostID = HostID
 			Me.FolderPath = FolderPath
 			Me.fParent = Parent
@@ -186,18 +186,18 @@ Public Class HostFolder
 		End Set
 	End Property
 
-	Private Function mGetFolderID(HostID As String, FolderPath As String, ByRef OutFolderID As String) As String
-		Try
-			Dim strData As String = "<" & HostID & "><" & FolderPath & ">"
-			Dim strRet As String = fPigFunc.GetTextPigMD5(strData, PigMD5.enmTextType.UTF8, OutFolderID)
-			If strRet <> "OK" Then Throw New Exception((strRet))
-			If OutFolderID = "" Then Throw New Exception("Unable to get FolderID")
-			Return "OK"
-		Catch ex As Exception
-			OutFolderID = ""
-			Return ""
-		End Try
-	End Function
+	'Private Function mGetFolderID(HostID As String, FolderPath As String, ByRef OutFolderID As String) As String
+	'	Try
+	'		Dim strData As String = "<" & HostID & "><" & FolderPath & ">"
+	'		Dim strRet As String = fPigFunc.GetTextPigMD5(strData, PigMD5.enmTextType.UTF8, OutFolderID)
+	'		If strRet <> "OK" Then Throw New Exception((strRet))
+	'		If OutFolderID = "" Then Throw New Exception("Unable to get FolderID")
+	'		Return "OK"
+	'	Catch ex As Exception
+	'		OutFolderID = ""
+	'		Return ""
+	'	End Try
+	'End Function
 
 	Private Function mGetFolderName(AbsoluteFolderPath As String) As String
 		Try

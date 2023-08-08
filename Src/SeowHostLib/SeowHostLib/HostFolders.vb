@@ -17,18 +17,19 @@
 '* Author: Seowsoft
 '* Describe: HostFolder 的集合类|Collection class of HostFolder
 '* Home Url: https://www.seowsoft.com
-'* Version: 1.5
+'* Version: 1.6
 '* Create Time: 7/3/2023
 '* 1.1	8/3/2023	Modify New,Add
 '* 1.2	13/3/2023	Modify Add
 '* 1.3	4/4/2023	Modify Add
 '* 1.5	18/4/2023	Modify Add,AddOrGet
+'* 1.6	8/8/2023	Modify IsItemExists
 '**********************************
 Imports PigToolsLiteLib
 Public Class HostFolders
 	Inherits PigBaseLocal
 	Implements IEnumerable(Of HostFolder)
-	Private Const CLS_VERSION As String = "1.5.2"
+	Private Const CLS_VERSION As String = "1.6.2"
 	Private ReadOnly moList As New List(Of HostFolder)
 	Public Sub New()
 		MyBase.New(CLS_VERSION)
@@ -75,7 +76,8 @@ Public Class HostFolders
 			End Try
 		End Get
 	End Property
-	Public Function IsItemExists(FolderID) As Boolean
+
+	Public Function IsItemExists(FolderID As String) As Boolean
 		Try
 			IsItemExists = False
 			For Each oHostFolder As HostFolder In moList
@@ -89,6 +91,8 @@ Public Class HostFolders
 			Return False
 		End Try
 	End Function
+
+
 	Private Sub mAdd(NewItem As HostFolder)
 		Try
 			If Me.IsItemExists(NewItem.FolderID) = True Then Throw New Exception(NewItem.FolderID & "Already exists")

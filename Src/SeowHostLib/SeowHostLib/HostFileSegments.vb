@@ -17,14 +17,15 @@
 '* Author: Seowsoft
 '* Describe: HostFileSegment 的集合类|Collection class of HostFileSegment
 '* Home Url: https://www.seowsoft.com
-'* Version: 1.0
+'* Version: 1.1
 '* Create Time: 7/3/2023
+'* 1.1	8/8/2023	Modify IsItemExists
 '**********************************
 Imports PigToolsLiteLib
 Friend Class HostFileSegments
 	Inherits PigBaseLocal
 	Implements IEnumerable(Of HostFileSegment)
-	Private Const CLS_VERSION As String = "1.0.0"
+	Private Const CLS_VERSION As String = "1.1.0"
 	Private ReadOnly moList As New List(Of HostFileSegment)
 	Public Sub New()
 		MyBase.New(CLS_VERSION)
@@ -71,7 +72,7 @@ Friend Class HostFileSegments
 			End Try
 		End Get
 	End Property
-	Public Function IsItemExists(FileSegID) As Boolean
+	Public Function IsItemExists(FileSegID As String) As Boolean
 		Try
 			IsItemExists = False
 			For Each oHostFileSegment As HostFileSegment In moList

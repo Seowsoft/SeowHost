@@ -6,7 +6,7 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v3.1": {
-      "SeowHostLib/1.1.20": {
+      "SeowHostLib/1.1.22": {
         "dependencies": {
           "PigCmdLib": "2.2.80",
           "PigSQLSrvLib": "2.8.118"
@@ -599,7 +599,7 @@
     }
   },
   "libraries": {
-    "SeowHostLib/1.1.20": {
+    "SeowHostLib/1.1.22": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

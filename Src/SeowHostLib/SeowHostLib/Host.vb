@@ -17,7 +17,7 @@
 '* Author: Seowsoft
 '* Describe: 主机信息处理|Host information processing
 '* Home Url: https://www.seowsoft.com
-'* Version: 1.15
+'* Version: 1.16
 '* Create Time: 8/10/2021
 '* 1.1    12/10/2021   Add New
 '* 1.2    18/10/2021   Modify New
@@ -32,6 +32,7 @@
 '* 1.12   21/4/2023  Modify RefHostFolders
 '* 1.13   21/4/2023  Modify New
 '* 1.15   29/4/2023  Modify RefHostFolders
+'* 1.16   8/8/2023  Add GetFolderID
 '********************************************************************
 Imports PigToolsLiteLib
 Imports PigSQLSrvLib
@@ -39,7 +40,7 @@ Imports PigCmdLib
 
 Public Class Host
 	Inherits PigBaseLocal
-	Private Const CLS_VERSION As String = "1.15.6"
+	Private Const CLS_VERSION As String = "1.16.2"
 
 	''' <summary>
 	''' 主机名|host name
@@ -408,5 +409,19 @@ Public Class Host
 			Return Me.GetSubErrInf("RefHostFolders", ex)
 		End Try
 	End Function
+
+	Public Function GetFolderID(HostID As String, FolderPath As String) As String
+		Try
+			GetFolderID = ""
+			Dim strData As String = "<" & HostID & "><" & FolderPath & ">"
+			Dim strRet As String = Me.mPigFunc.GetTextPigMD5(strData, PigMD5.enmTextType.UTF8, GetFolderID)
+			If strRet <> "OK" Then Throw New Exception((strRet))
+			If GetFolderID = "" Then Throw New Exception("Unable to get FolderID")
+		Catch ex As Exception
+			Me.SetSubErrInf("GetFolderID", ex)
+			Return ""
+		End Try
+	End Function
+
 
 End Class

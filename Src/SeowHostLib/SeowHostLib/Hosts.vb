@@ -17,15 +17,16 @@
 '* Author: Seowsoft
 '* Describe: Host 的集合类|Collection class of Host
 '* Home Url: https://www.seowsoft.com
-'* Version: 1.1
+'* Version: 1.2
 '* Create Time: 15/10/2022
 '* 1.1    18/4/2023   Modify Add
+'* 1.2	8/8/2023	Modify IsItemExists
 '**********************************
 Imports PigToolsLiteLib
 Public Class Hosts
     Inherits PigBaseLocal
     Implements IEnumerable(Of Host)
-    Private Const CLS_VERSION As String = "1.1.2"
+    Private Const CLS_VERSION As String = "1.2.1"
     Private ReadOnly moList As New List(Of Host)
     Public Sub New()
         MyBase.New(CLS_VERSION)
@@ -72,7 +73,7 @@ Public Class Hosts
             End Try
         End Get
     End Property
-    Public Function IsItemExists(HostID) As Boolean
+    Public Function IsItemExists(HostID As String) As Boolean
         Try
             IsItemExists = False
             For Each oPigHost As Host In moList

@@ -17,14 +17,15 @@
 '* Author: Seowsoft
 '* Describe: HostFileContent 的集合类|Collection class of HostFileContent
 '* Home Url: https://www.seowsoft.com
-'* Version: 1.0
+'* Version: 1.1
 '* Create Time: 7/3/2023
+'* 1.1	8/8/2023	Modify IsItemExists
 '**********************************
 Imports PigToolsLiteLib
 Friend Class HostFileContents
 	Inherits PigBaseLocal
 	Implements IEnumerable(Of HostFileContent)
-	Private Const CLS_VERSION As String = "1.0.0"
+	Private Const CLS_VERSION As String = "1.1.0"
 	Private ReadOnly moList As New List(Of HostFileContent)
 	Public Sub New()
 		MyBase.New(CLS_VERSION)
@@ -71,7 +72,7 @@ Friend Class HostFileContents
 			End Try
 		End Get
 	End Property
-	Public Function IsItemExists(FileContID) As Boolean
+	Public Function IsItemExists(FileContID As String) As Boolean
 		Try
 			IsItemExists = False
 			For Each oHostFileContent As HostFileContent In moList
