@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>SeowHostLibDemo</RootNamespace>
+    <TargetFrameworks>net20;net30;net40;net6.0;netcoreapp3.1;</TargetFrameworks>
+    <Version>1.1.26</Version>
+    <Description>Synchronize the PigCmdLib update sample program.</Description>
+    <Copyright>Copyright (c) 2021-2023 Seowsoft Studio</Copyright>
+    <Authors>Seowsoft</Authors>
+    <Company>Seowsoft Studio</Company>
+    <PackageProjectUrl>https://www.seowsoft.com</PackageProjectUrl>
+    <PackageReadmeFile>SampleDemo.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/Seowsoft/SeowHost/tree/main/Src/SeowHostLibDemo</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageTags>host folder file directory</PackageTags>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SeowHostLib" Version="1.1.26" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="SampleDemo.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>

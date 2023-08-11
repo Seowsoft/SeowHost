@@ -17,7 +17,7 @@
 '* Author: Seowsoft
 '* Describe: 主机应用|Host Applications
 '* Home Url: https://www.seowsoft.com
-'* Version: 1.27
+'* Version: 1.29
 '* Create Time: 1/10/2022
 '* 1.1  1/10/2022   Add RefDBConn
 '* 1.2  15/10/2022  Add mCreateTable_HostInf, modify RefDBConn
@@ -45,6 +45,7 @@
 '* 1.26	7/5/2023    Modify fMergeHostDirInf
 '* 1.27	29/7/2023   Modify RefDBConn,add mCreateTable_HFDirExtInf,mCreateTable_HFFolderExtInf,mCreateTable_HostExtInf
 '* 1.28	30/7/2023   Modify fConnSQLSrv,AddNewHostFolder
+'* 1.29	10/8/2023   Modify fMergeHostDirInf,fMergeHostFileInf
 '**********************************
 Imports System.Data
 Imports System.IO
@@ -59,7 +60,7 @@ Imports PigToolsLiteLib
 Imports PigCmdLib
 Public Class SeowHostApp
     Inherits PigBaseLocal
-    Private Const CLS_VERSION As String = "1.28.8"
+    Private Const CLS_VERSION As String = "1.29.18"
 
     Public ReadOnly Property BaseDirPath As String
     Private ReadOnly Property mMyHostID As String
@@ -709,19 +710,20 @@ Public Class SeowHostApp
         Dim strSQL As String = ""
         Try
             LOG.StepName = "Generate SQL"
-            strTmpTabName = "_ptmpDirList_" & InHostFolder.FolderID
+            Dim strTmpTabName2 As String = "ptmpDirList_" & InHostFolder.FolderID
+            strTmpTabName = "#" & strTmpTabName2
             With Me.mPigFunc
                 strSQL = ""
-                .AddMultiLineText(strSQL, "IF EXISTS(SELECT 1 FROM sysobjects WHERE name='" & strTmpTabName & "' AND xtype='U') DROP TABLE dbo." & strTmpTabName)
-                .AddMultiLineText(strSQL, "CREATE TABLE dbo." & strTmpTabName & "(")
+                .AddMultiLineText(strSQL, "IF EXISTS(SELECT 1 FROM tempdb..sysobjects WHERE id=object_id(N'tempdb.." & strTmpTabName & "') AND xtype='U') DROP TABLE " & strTmpTabName)
+                .AddMultiLineText(strSQL, "CREATE TABLE " & strTmpTabName & "(")
                 .AddMultiLineText(strSQL, "DirID char(32) NOT NULL", 1)
                 .AddMultiLineText(strSQL, ",DirPath nvarchar(4000) NOT NULL", 1)
                 .AddMultiLineText(strSQL, ",DirSize money NOT NULL", 1)
                 .AddMultiLineText(strSQL, ",DirFiles int NOT NULL", 1)
                 .AddMultiLineText(strSQL, ",FastPigMD5 char(32) NOT NULL", 1)
                 .AddMultiLineText(strSQL, ",DirUpdateTime datetime NOT NULL", 1)
-                .AddMultiLineText(strSQL, "CONSTRAINT PK_" & strTmpTabName & " PRIMARY KEY CLUSTERED(DirPath)", 1)
                 .AddMultiLineText(strSQL, ")")
+                .AddMultiLineText(strSQL, "CREATE UNIQUE INDEX UI_" & strTmpTabName2 & " ON #" & strTmpTabName & "(DirPath)")
             End With
             LOG.StepName = "ExecuteNonQuery"
             Dim oCmdSQLSrvText As CmdSQLSrvText
@@ -733,7 +735,7 @@ Public Class SeowHostApp
                 If LOG.Ret <> "OK" Then Throw New Exception(LOG.Ret)
             End With
             oCmdSQLSrvText = Nothing
-            strSQL = "INSERT INTO dbo." & strTmpTabName & "(DirID,DirPath,DirSize,DirFiles,FastPigMD5,DirUpdateTime)VALUES(@DirID,@DirPath,@DirSize,@DirFiles,@FastPigMD5,@DirUpdateTime)"
+            strSQL = "INSERT INTO " & strTmpTabName & "(DirID,DirPath,DirSize,DirFiles,FastPigMD5,DirUpdateTime)VALUES(@DirID,@DirPath,@DirSize,@DirFiles,@FastPigMD5,@DirUpdateTime)"
             LOG.StepName = "ExecuteNonQuery"
             oCmdSQLSrvText = New CmdSQLSrvText(strSQL)
             With oCmdSQLSrvText
@@ -789,7 +791,7 @@ Public Class SeowHostApp
                 .AddMultiLineText(strSQL, "AND p.IsDel=0", 1)
                 '---------
                 If InHostFolder.fParent.fParent.IsDebug = False Then
-                    .AddMultiLineText(strSQL, "DROP TABLE dbo." & strTmpTabName)
+                    .AddMultiLineText(strSQL, "DROP TABLE " & strTmpTabName)
                 End If
             End With
             LOG.StepName = "ExecuteNonQuery"
@@ -1599,18 +1601,19 @@ Public Class SeowHostApp
         Dim strSQL As String = ""
         Try
             LOG.StepName = "Generate SQL"
-            strTmpTabName = "_ptmpFileList_" & InHostDir.DirID
+            Dim strTmpTabName2 As String = "_ptmpFileList_" & InHostDir.DirID
+            strTmpTabName = "#" & strTmpTabName2
             With Me.mPigFunc
                 strSQL = ""
-                .AddMultiLineText(strSQL, "IF EXISTS(SELECT 1 FROM sysobjects WHERE name='" & strTmpTabName & "' AND xtype='U') DROP TABLE dbo." & strTmpTabName)
-                .AddMultiLineText(strSQL, "CREATE TABLE dbo." & strTmpTabName & "(")
+                .AddMultiLineText(strSQL, "IF EXISTS(SELECT 1 FROM tempdb..sysobjects WHERE id=object_id(N'tempdb.." & strTmpTabName & "') AND xtype='U') DROP TABLE " & strTmpTabName)
+                .AddMultiLineText(strSQL, "CREATE TABLE " & strTmpTabName & "(")
                 .AddMultiLineText(strSQL, "FileID char(32) NOT NULL", 1)
                 .AddMultiLineText(strSQL, ",FileName nvarchar(512) NOT NULL", 1)
                 .AddMultiLineText(strSQL, ",FileSize int NOT NULL", 1)
                 .AddMultiLineText(strSQL, ",FastPigMD5 char(32) NOT NULL", 1)
                 .AddMultiLineText(strSQL, ",FileUpdateTime datetime NOT NULL", 1)
-                .AddMultiLineText(strSQL, "CONSTRAINT PK_" & strTmpTabName & " PRIMARY KEY CLUSTERED(FileID)", 1)
                 .AddMultiLineText(strSQL, ")")
+                .AddMultiLineText(strSQL, "CREATE UNIQUE INDEX UI_" & strTmpTabName2 & " ON #" & strTmpTabName & "(FileID)")
             End With
             LOG.StepName = "ExecuteNonQuery"
             Dim oCmdSQLSrvText As CmdSQLSrvText
@@ -1622,7 +1625,7 @@ Public Class SeowHostApp
                 If LOG.Ret <> "OK" Then Throw New Exception(LOG.Ret)
             End With
             oCmdSQLSrvText = Nothing
-            strSQL = "INSERT INTO dbo." & strTmpTabName & "(FileID,FileName,FileSize,FastPigMD5,FileUpdateTime)VALUES(@FileID,@FileName,@FileSize,@FastPigMD5,@FileUpdateTime)"
+            strSQL = "INSERT INTO " & strTmpTabName & "(FileID,FileName,FileSize,FastPigMD5,FileUpdateTime)VALUES(@FileID,@FileName,@FileSize,@FastPigMD5,@FileUpdateTime)"
             LOG.StepName = "ExecuteNonQuery"
             oCmdSQLSrvText = New CmdSQLSrvText(strSQL)
             With oCmdSQLSrvText
@@ -1683,7 +1686,7 @@ Public Class SeowHostApp
                 .AddMultiLineText(strSQL, "UPDATE dbo._ptHFDirInf SET IsScan=0,LastScanTime=GETDATE() WHERE DirID=@DirID")
                 '---------
                 If InHostDir.fParent.fParent.fParent.IsDebug = False Then
-                    .AddMultiLineText(strSQL, "DROP TABLE dbo." & strTmpTabName)
+                    .AddMultiLineText(strSQL, "DROP TABLE " & strTmpTabName)
                 End If
             End With
             LOG.StepName = "ExecuteNonQuery"

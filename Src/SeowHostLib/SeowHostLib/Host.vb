@@ -40,7 +40,7 @@ Imports PigCmdLib
 
 Public Class Host
 	Inherits PigBaseLocal
-	Private Const CLS_VERSION As String = "1.16.2"
+	Private Const CLS_VERSION As String = "1.16.6"
 
 	''' <summary>
 	''' Ö÷»úÃû|host name
@@ -423,5 +423,17 @@ Public Class Host
 		End Try
 	End Function
 
+	Public Function GetFolderID(FolderPath As String) As String
+		Try
+			GetFolderID = ""
+			Dim strData As String = "<" & Me.HostID & "><" & FolderPath & ">"
+			Dim strRet As String = Me.mPigFunc.GetTextPigMD5(strData, PigMD5.enmTextType.UTF8, GetFolderID)
+			If strRet <> "OK" Then Throw New Exception((strRet))
+			If GetFolderID = "" Then Throw New Exception("Unable to get FolderID")
+		Catch ex As Exception
+			Me.SetSubErrInf("GetFolderID", ex)
+			Return ""
+		End Try
+	End Function
 
 End Class

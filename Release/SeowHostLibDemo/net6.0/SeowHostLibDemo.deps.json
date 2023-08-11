@@ -6,9 +6,9 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v6.0": {
-      "SeowHostLibDemo/1.1.18": {
+      "SeowHostLibDemo/1.1.26": {
         "dependencies": {
-          "SeowHostLib": "1.1.18"
+          "SeowHostLib": "1.1.26"
         },
         "runtime": {
           "SeowHostLibDemo.dll": {}
@@ -236,14 +236,14 @@
           }
         }
       },
-      "PigCmdLib/2.2.78": {
+      "PigCmdLib/2.2.80": {
         "dependencies": {
           "PigToolsLiteLib": "3.5.16"
         },
         "runtime": {
           "lib/net6.0/PigCmdLib.dll": {
-            "assemblyVersion": "2.2.78.0",
-            "fileVersion": "2.2.78.0"
+            "assemblyVersion": "2.2.80.0",
+            "fileVersion": "2.2.80.0"
           }
         }
       },
@@ -267,15 +267,15 @@
           }
         }
       },
-      "SeowHostLib/1.1.18": {
+      "SeowHostLib/1.1.26": {
         "dependencies": {
-          "PigCmdLib": "2.2.78",
+          "PigCmdLib": "2.2.80",
           "PigSQLSrvLib": "2.8.118"
         },
         "runtime": {
           "lib/net6.0/SeowHostLib.dll": {
-            "assemblyVersion": "1.1.18.0",
-            "fileVersion": "1.1.18.0"
+            "assemblyVersion": "1.1.26.0",
+            "fileVersion": "1.1.26.0"
           }
         }
       },
@@ -450,7 +450,7 @@
     }
   },
   "libraries": {
-    "SeowHostLibDemo/1.1.18": {
+    "SeowHostLibDemo/1.1.26": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
@@ -581,12 +581,12 @@
       "path": "microsoft.win32.systemevents/6.0.0",
       "hashPath": "microsoft.win32.systemevents.6.0.0.nupkg.sha512"
     },
-    "PigCmdLib/2.2.78": {
+    "PigCmdLib/2.2.80": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-sKrZSA0A0OZeQCJZZBe91roLqIZEyKY3Mfy4xVZpkN8wG0DyL262cBFqw+hPuAYM2phCA0EzboS/WGKHSsxZmg==",
-      "path": "pigcmdlib/2.2.78",
-      "hashPath": "pigcmdlib.2.2.78.nupkg.sha512"
+      "sha512": "sha512-CtMIx/1myvzrP3EDn/VQOn854fMOtIF4F42OHzAz9KNyL5zXnlDBBWW1duYYmbRIWG0LwmP5RJ8wYPi5DpqRSA==",
+      "path": "pigcmdlib/2.2.80",
+      "hashPath": "pigcmdlib.2.2.80.nupkg.sha512"
     },
     "PigSQLSrvLib/2.8.118": {
       "type": "package",
@@ -602,12 +602,12 @@
       "path": "pigtoolslitelib/3.5.16",
       "hashPath": "pigtoolslitelib.3.5.16.nupkg.sha512"
     },
-    "SeowHostLib/1.1.18": {
+    "SeowHostLib/1.1.26": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-t9IdVGL7T+QiFTAU8VZ+qPWaX6KC0wC4XObGK7Yi3LV4AFDWM3sN/+pft7mMhVms63VFEA1mCxFztHbNi4ei1g==",
-      "path": "seowhostlib/1.1.18",
-      "hashPath": "seowhostlib.1.1.18.nupkg.sha512"
+      "sha512": "sha512-yIj7VHnXMWF+TfWTH0kmULsEU4Bp0ixLM2T3lzSpXrzb8lvmAQ6el8dh80wXvgJeod4PF3TB/xNZn8K1kKLJsQ==",
+      "path": "seowhostlib/1.1.26",
+      "hashPath": "seowhostlib.1.1.26.nupkg.sha512"
     },
     "System.Configuration.ConfigurationManager/6.0.1": {
       "type": "package",
