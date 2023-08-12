@@ -3,7 +3,7 @@
   <PropertyGroup>
     <RootNamespace>SeowHostLib</RootNamespace>
     <TargetFrameworks>net20;net30;net35;net40;net45;net46;net47;net48;netcoreapp3.1;net5.0;net6.0;net7.0;</TargetFrameworks>
-    <Version>1.1.26</Version>
+    <Version>1.1.28</Version>
     <Title>Seow host library</Title>
     <Authors>Seowsoft</Authors>
     <Company>Seowsoft Studio</Company>

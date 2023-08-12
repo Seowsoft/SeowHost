@@ -723,7 +723,7 @@ Public Class SeowHostApp
                 .AddMultiLineText(strSQL, ",FastPigMD5 char(32) NOT NULL", 1)
                 .AddMultiLineText(strSQL, ",DirUpdateTime datetime NOT NULL", 1)
                 .AddMultiLineText(strSQL, ")")
-                .AddMultiLineText(strSQL, "CREATE UNIQUE INDEX UI_" & strTmpTabName2 & " ON #" & strTmpTabName & "(DirPath)")
+                .AddMultiLineText(strSQL, "CREATE UNIQUE INDEX UI_" & strTmpTabName2 & " ON " & strTmpTabName & "(DirPath)")
             End With
             LOG.StepName = "ExecuteNonQuery"
             Dim oCmdSQLSrvText As CmdSQLSrvText
@@ -1613,7 +1613,7 @@ Public Class SeowHostApp
                 .AddMultiLineText(strSQL, ",FastPigMD5 char(32) NOT NULL", 1)
                 .AddMultiLineText(strSQL, ",FileUpdateTime datetime NOT NULL", 1)
                 .AddMultiLineText(strSQL, ")")
-                .AddMultiLineText(strSQL, "CREATE UNIQUE INDEX UI_" & strTmpTabName2 & " ON #" & strTmpTabName & "(FileID)")
+                .AddMultiLineText(strSQL, "CREATE UNIQUE INDEX UI_" & strTmpTabName2 & " ON " & strTmpTabName & "(FileID)")
             End With
             LOG.StepName = "ExecuteNonQuery"
             Dim oCmdSQLSrvText As CmdSQLSrvText

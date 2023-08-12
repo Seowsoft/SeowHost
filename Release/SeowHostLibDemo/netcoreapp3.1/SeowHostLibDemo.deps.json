@@ -6,9 +6,9 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v3.1": {
-      "SeowHostLibDemo/1.1.26": {
+      "SeowHostLibDemo/1.1.28": {
         "dependencies": {
-          "SeowHostLib": "1.1.26"
+          "SeowHostLib": "1.1.28"
         },
         "runtime": {
           "SeowHostLibDemo.dll": {}
@@ -295,15 +295,15 @@
           }
         }
       },
-      "SeowHostLib/1.1.26": {
+      "SeowHostLib/1.1.28": {
         "dependencies": {
           "PigCmdLib": "2.2.80",
           "PigSQLSrvLib": "2.8.118"
         },
         "runtime": {
           "lib/netcoreapp3.1/SeowHostLib.dll": {
-            "assemblyVersion": "1.1.26.0",
-            "fileVersion": "1.1.26.0"
+            "assemblyVersion": "1.1.28.0",
+            "fileVersion": "1.1.28.0"
           }
         }
       },
@@ -610,7 +610,7 @@
     }
   },
   "libraries": {
-    "SeowHostLibDemo/1.1.26": {
+    "SeowHostLibDemo/1.1.28": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
@@ -769,12 +769,12 @@
       "path": "pigtoolslitelib/3.5.16",
       "hashPath": "pigtoolslitelib.3.5.16.nupkg.sha512"
     },
-    "SeowHostLib/1.1.26": {
+    "SeowHostLib/1.1.28": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-yIj7VHnXMWF+TfWTH0kmULsEU4Bp0ixLM2T3lzSpXrzb8lvmAQ6el8dh80wXvgJeod4PF3TB/xNZn8K1kKLJsQ==",
-      "path": "seowhostlib/1.1.26",
-      "hashPath": "seowhostlib.1.1.26.nupkg.sha512"
+      "sha512": "sha512-1C/YxWOEnlQP9OkW1n1aawINM7EkK8CZcH4jRbmURYgUvxMOsGPYrpHX0rf2MGRVSN/99HcaF5j34uKMOoLqMA==",
+      "path": "seowhostlib/1.1.28",
+      "hashPath": "seowhostlib.1.1.28.nupkg.sha512"
     },
     "System.Configuration.ConfigurationManager/6.0.1": {
       "type": "package",

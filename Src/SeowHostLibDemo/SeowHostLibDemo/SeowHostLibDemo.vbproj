@@ -3,7 +3,7 @@
   <PropertyGroup>
     <RootNamespace>SeowHostLibDemo</RootNamespace>
     <TargetFrameworks>net20;net30;net40;net6.0;netcoreapp3.1;</TargetFrameworks>
-    <Version>1.1.26</Version>
+    <Version>1.1.28</Version>
     <Description>Synchronize the PigCmdLib update sample program.</Description>
     <Copyright>Copyright (c) 2021-2023 Seowsoft Studio</Copyright>
     <Authors>Seowsoft</Authors>
@@ -18,7 +18,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SeowHostLib" Version="1.1.26" />
+    <PackageReference Include="SeowHostLib" Version="1.1.28" />
   </ItemGroup>
 
   <ItemGroup>
