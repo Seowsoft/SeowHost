@@ -6,9 +6,9 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v3.1": {
-      "SeowHostLib/1.1.28": {
+      "SeowHostLib/1.1.30": {
         "dependencies": {
-          "PigCmdLib": "2.2.80",
+          "PigCmdLib": "2.2.82",
           "PigSQLSrvLib": "2.8.118"
         },
         "runtime": {
@@ -262,14 +262,14 @@
           }
         }
       },
-      "PigCmdLib/2.2.80": {
+      "PigCmdLib/2.2.82": {
         "dependencies": {
           "PigToolsLiteLib": "3.5.16"
         },
         "runtime": {
           "lib/netcoreapp3.1/PigCmdLib.dll": {
-            "assemblyVersion": "2.2.80.0",
-            "fileVersion": "2.2.80.0"
+            "assemblyVersion": "2.2.82.0",
+            "fileVersion": "2.2.82.0"
           }
         }
       },
@@ -599,7 +599,7 @@
     }
   },
   "libraries": {
-    "SeowHostLib/1.1.28": {
+    "SeowHostLib/1.1.30": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
@@ -737,12 +737,12 @@
       "path": "microsoft.win32.systemevents/6.0.0",
       "hashPath": "microsoft.win32.systemevents.6.0.0.nupkg.sha512"
     },
-    "PigCmdLib/2.2.80": {
+    "PigCmdLib/2.2.82": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-CtMIx/1myvzrP3EDn/VQOn854fMOtIF4F42OHzAz9KNyL5zXnlDBBWW1duYYmbRIWG0LwmP5RJ8wYPi5DpqRSA==",
-      "path": "pigcmdlib/2.2.80",
-      "hashPath": "pigcmdlib.2.2.80.nupkg.sha512"
+      "sha512": "sha512-N0GYHhBS42zR6qTiEKdr903HAKPFeGkFfZtwRFWL+UMALUu6A4M3C93a1Zf5L6aJq469P5aFfEDncl0lcjdcOA==",
+      "path": "pigcmdlib/2.2.82",
+      "hashPath": "pigcmdlib.2.2.82.nupkg.sha512"
     },
     "PigSQLSrvLib/2.8.118": {
       "type": "package",
