@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>SeowHostLiteLib</RootNamespace>
+    <TargetFrameworks>net20;net30;net35;net40;net45;net46;net47;net48;netcoreapp3.1;net5.0;net6.0;net7.0;</TargetFrameworks>
+    <Version>1.0.1</Version>
+    <Title>Seow host lite library</Title>
+    <Authors>Seowsoft</Authors>
+    <Company>Seowsoft Studio</Company>
+    <Description>A class library that provides host related functions.</Description>
+    <Copyright>Copyright (c) 2023 Seowsoft Studio</Copyright>
+    <PackageProjectUrl>https://www.seowsoft.com</PackageProjectUrl>
+    <ApplicationIcon>Seowsoft.png</ApplicationIcon>
+    <PackageIcon>Seowsoft.png</PackageIcon>
+    <PackageReadmeFile>Readme.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="Seowsoft.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\..\SeowCron\Src\SeowCronLib\SeowCronLib\Readme.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\..\..\..\SeowCron\Src\SeowCronLib\SeowCronLib\Seowsoft.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>
