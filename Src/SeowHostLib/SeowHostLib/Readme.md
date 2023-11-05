@@ -4,4 +4,4 @@ This is a class library that handles host information, file and directory proces
 
  - Get local information
  - Get host directory and file information
- - It can run on Windows and Linux platforms.
+ - It can run on Windows only.

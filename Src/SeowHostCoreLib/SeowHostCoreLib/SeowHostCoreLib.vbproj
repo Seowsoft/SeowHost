@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>SeowHostCoreLib</RootNamespace>
+    <TargetFrameworks>netcoreapp3.1;net5.0;net6.0;net7.0;</TargetFrameworks>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageId></PackageId>
+    <Title>Seow host Core library</Title>
+    <Version>1.1.62</Version>
+    <Authors>Seowsoft</Authors>
+    <Company>Seowsoft Studio</Company>
+    <Description>This is a class library that handles host information, file and directory processing, and other functions.</Description>
+    <Copyright>Copyright (c) 2023 Seowsoft Studio</Copyright>
+    <PackageProjectUrl>https://www.seowsoft.com</PackageProjectUrl>
+    <PackageIcon>Seowsoft.png</PackageIcon>
+    <PackageReadmeFile>Readme.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/Seowsoft/SeowHost/tree/main/Src/SeowHostCoreLib</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>host folder file directory</PackageTags>
+    <PackageReleaseNotes>Separate the version used for the .NET Core from SeowHostLib.</PackageReleaseNotes>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PigCmdLib" Version="2.2.108" />
+    <PackageReference Include="PigSQLSrvCoreLib" Version="2.8.122" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Readme.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="Seowsoft.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>

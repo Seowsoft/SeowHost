@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34221.43
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "SeowHostCoreLib", "SeowHostCoreLib\SeowHostCoreLib.vbproj", "{2CBF541E-FD8A-46A9-BB00-7FA669660EBB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2CBF541E-FD8A-46A9-BB00-7FA669660EBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CBF541E-FD8A-46A9-BB00-7FA669660EBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CBF541E-FD8A-46A9-BB00-7FA669660EBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CBF541E-FD8A-46A9-BB00-7FA669660EBB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {762BC3A3-DB1F-40AA-920D-2A66C20EE9F2}
+	EndGlobalSection
+EndGlobal

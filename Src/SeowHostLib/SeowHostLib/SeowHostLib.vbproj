@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <RootNamespace>SeowHostLib</RootNamespace>
-    <TargetFrameworks>net20;net30;net35;net40;net45;net46;net47;net48;netcoreapp3.1;net5.0;net6.0;net7.0;</TargetFrameworks>
-    <Version>1.1.60</Version>
+    <TargetFrameworks>net20;net30;net35;net40;net45;net46;net47;net48;</TargetFrameworks>
+    <Version>1.1.62</Version>
     <Title>Seow host library</Title>
     <Authors>Seowsoft</Authors>
     <Company>Seowsoft Studio</Company>
@@ -22,8 +22,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="PigCmdLib" Version="2.2.106" />
-    <PackageReference Include="PigSQLSrvLib" Version="2.8.120" />
+    <PackageReference Include="PigCmdLib" Version="2.2.108" />
+    <PackageReference Include="PigSQLSrvLib" Version="2.8.122.8" />
   </ItemGroup>
 
   <ItemGroup>
