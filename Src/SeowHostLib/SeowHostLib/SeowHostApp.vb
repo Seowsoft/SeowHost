@@ -52,15 +52,16 @@ Imports System.IO
 Imports System.IO.Compression
 #If NETFRAMEWORK Then
 Imports System.Data.SqlClient
+Imports PigSQLSrvLib
 #Else
 Imports Microsoft.Data.SqlClient
+Imports PigSQLSrvCoreLib
 #End If
-Imports PigSQLSrvLib
 Imports PigToolsLiteLib
 Imports PigCmdLib
 Public Class SeowHostApp
     Inherits PigBaseLocal
-    Private Const CLS_VERSION As String = "1.29.18"
+    Private Const CLS_VERSION As String = "1.29.20"
 
     Public ReadOnly Property BaseDirPath As String
     Private ReadOnly Property mMyHostID As String

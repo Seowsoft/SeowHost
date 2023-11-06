@@ -3,7 +3,7 @@
   <PropertyGroup>
     <RootNamespace>SeowHostLib</RootNamespace>
     <TargetFrameworks>net20;net30;net35;net40;net45;net46;net47;net48;</TargetFrameworks>
-    <Version>1.1.62</Version>
+    <Version>1.1.66</Version>
     <Title>Seow host library</Title>
     <Authors>Seowsoft</Authors>
     <Company>Seowsoft Studio</Company>
@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <PackageReference Include="PigCmdLib" Version="2.2.108" />
-    <PackageReference Include="PigSQLSrvLib" Version="2.8.122.8" />
+    <PackageReference Include="PigSQLSrvLib" Version="2.8.126" />
   </ItemGroup>
 
   <ItemGroup>

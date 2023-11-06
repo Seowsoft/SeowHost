@@ -17,22 +17,24 @@
 '* Author: Seowsoft
 '* Describe: 主机信息处理|Table Extension Information Processing
 '* Home Url: https://www.seowsoft.com
-'* Version: 1.2
+'* Version: 1.3
 '* Create Time: 7/28/2023
 '* 1.1    29/7/2023   Modify New
 '* 1.2    30/7/2023   Add RefSQL,SetExtValue, modify mGetExtValue
+'* 1.3    5/11/2023   Use PigSQLSrvCoreLib
 '********************************************************************
 Imports PigToolsLiteLib
-Imports PigSQLSrvLib
 #If NETFRAMEWORK Then
 Imports System.Data.SqlClient
+Imports PigSQLSrvLib
 #Else
 Imports Microsoft.Data.SqlClient
+Imports PigSQLSrvCoreLib
 #End If
 
 Friend Class fTabExt
 	Inherits PigBaseLocal
-	Private Const CLS_VERSION As String = "1.2.10"
+	Private Const CLS_VERSION As String = "1.3.2"
 
 	Public Enum EnmWhatTab
 		HostInf = 1

@@ -43,14 +43,18 @@
 '* 1.25	25/6/2023	Modify mFindFolder,mFindFolderEnd
 '* 1.26	30/7/2023	Add StaticInf_TimeoutMinutes,StaticInf_ScanLevel
 '**********************************
+#If NETFRAMEWORK Then
 Imports PigSQLSrvLib
+#Else
+Imports PigSQLSrvCoreLib
+#End If
 Imports PigToolsLiteLib
 Imports System.Threading
 'Imports System.ComponentModel.Design
 
 Public Class HostFolder
 	Inherits PigBaseLocal
-	Private Const CLS_VERSION As String = "1.26.2"
+	Private Const CLS_VERSION As String = "1.26.8"
 
 	Public ReadOnly Property HostDirs As New HostDirs
 	Friend ReadOnly Property fParent As Host

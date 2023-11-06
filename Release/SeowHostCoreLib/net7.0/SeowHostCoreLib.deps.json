@@ -6,10 +6,10 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v7.0": {
-      "SeowHostCoreLib/1.1.62": {
+      "SeowHostCoreLib/1.1.66": {
         "dependencies": {
           "PigCmdLib": "2.2.108",
-          "PigSQLSrvCoreLib": "2.8.122"
+          "PigSQLSrvCoreLib": "2.8.126"
         },
         "runtime": {
           "SeowHostCoreLib.dll": {}
@@ -248,15 +248,15 @@
           }
         }
       },
-      "PigSQLSrvCoreLib/2.8.122": {
+      "PigSQLSrvCoreLib/2.8.126": {
         "dependencies": {
           "Microsoft.Data.SqlClient": "5.1.2",
           "PigToolsLiteLib": "3.5.22"
         },
         "runtime": {
           "lib/net7.0/PigSQLSrvCoreLib.dll": {
-            "assemblyVersion": "2.8.122.0",
-            "fileVersion": "2.8.122.0"
+            "assemblyVersion": "2.8.126.0",
+            "fileVersion": "2.8.126.0"
           }
         }
       },
@@ -439,7 +439,7 @@
     }
   },
   "libraries": {
-    "SeowHostCoreLib/1.1.62": {
+    "SeowHostCoreLib/1.1.66": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
@@ -577,12 +577,12 @@
       "path": "pigcmdlib/2.2.108",
       "hashPath": "pigcmdlib.2.2.108.nupkg.sha512"
     },
-    "PigSQLSrvCoreLib/2.8.122": {
+    "PigSQLSrvCoreLib/2.8.126": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-+G6saqn/DCnBXDMX4p+gk/c2MGhitJK9DosomsphCrtKud9RdOBU5xMJUHB/aToewDYKRdtS/Nynxp02lfJ16w==",
-      "path": "pigsqlsrvcorelib/2.8.122",
-      "hashPath": "pigsqlsrvcorelib.2.8.122.nupkg.sha512"
+      "sha512": "sha512-pTT+8R5rWjkIH4zcOt1ni1ZWh1Gu1Xqh8HJ6VM4e3ritHyr56AvGwQ+p0WKvJ1x5h1P+T+RciMuqZSr+vUIhwQ==",
+      "path": "pigsqlsrvcorelib/2.8.126",
+      "hashPath": "pigsqlsrvcorelib.2.8.126.nupkg.sha512"
     },
     "PigToolsLiteLib/3.5.22": {
       "type": "package",

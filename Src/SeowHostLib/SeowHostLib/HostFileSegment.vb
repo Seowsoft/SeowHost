@@ -21,12 +21,16 @@
 '* Create Time: 7/3/2023
 '* 1.1	12/10/2022	Modify Date Initial Time
 '**********************************
+#If NETFRAMEWORK Then
 Imports PigSQLSrvLib
+#Else
+Imports PigSQLSrvCoreLib
+#End If
 Imports PigToolsLiteLib
 
 Friend Class HostFileSegment
 	Inherits PigBaseLocal
-	Private Const CLS_VERSION As String = "1.1.0"
+	Private Const CLS_VERSION As String = "1.1.2"
 	Public Sub New(FileSegID As String)
 		MyBase.New(CLS_VERSION)
 		Me.FileSegID = FileSegID

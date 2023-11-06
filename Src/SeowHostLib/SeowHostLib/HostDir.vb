@@ -30,12 +30,17 @@
 
 Imports PigToolsLiteLib
 Imports System.Text
+#If NETFRAMEWORK Then
 Imports PigSQLSrvLib
+#Else
+Imports PigSQLSrvCoreLib
+#End If
+
 
 
 Public Class HostDir
 	Inherits PigBaseLocal
-	Private Const CLS_VERSION As String = "1.8.2"
+	Private Const CLS_VERSION As String = "1.8.6"
 
 	Friend ReadOnly Property fParent As HostFolder
 	Friend ReadOnly Property fPigFunc As New PigFunc

@@ -25,11 +25,15 @@
 '* 1.5	12/10/2022	Modify Date Initial Time
 '* 1.6	24/3/2023	Change EnmContStatus to IsCheck
 '**********************************
+#If NETFRAMEWORK Then
 Imports PigSQLSrvLib
+#Else
+Imports PigSQLSrvCoreLib
+#End If
 Imports PigToolsLiteLib
 Public Class HostFile
 	Inherits PigBaseLocal
-	Private Const CLS_VERSION As String = "1.6.3"
+	Private Const CLS_VERSION As String = "1.6.8"
 
 
 	Friend ReadOnly Property HostFileSegments As New HostFileSegments
