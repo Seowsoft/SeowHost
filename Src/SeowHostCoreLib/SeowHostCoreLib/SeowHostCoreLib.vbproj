@@ -6,7 +6,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId></PackageId>
     <Title>Seow host Core library</Title>
-    <Version>1.1.66</Version>
+    <Version>1.1.68</Version>
     <Authors>Seowsoft</Authors>
     <Company>Seowsoft Studio</Company>
     <Description>This is a class library that handles host information, file and directory processing, and other functions.</Description>
@@ -17,14 +17,14 @@
     <RepositoryUrl>https://github.com/Seowsoft/SeowHost/tree/main/Src/SeowHostCoreLib</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>host folder file directory</PackageTags>
-    <PackageReleaseNotes>Separate the version used for the .NET Core from SeowHostLib.</PackageReleaseNotes>
+    <PackageReleaseNotes>Reference the latest class library.</PackageReleaseNotes>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="PigCmdLib" Version="2.2.108" />
-    <PackageReference Include="PigSQLSrvCoreLib" Version="2.8.126" />
+    <PackageReference Include="PigCmdLib" Version="2.2.110" />
+    <PackageReference Include="PigSQLSrvCoreLib" Version="2.8.128" />
   </ItemGroup>
 
   <ItemGroup>
