@@ -6,10 +6,10 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v3.1": {
-      "SeowHostCoreLib/1.1.68": {
+      "SeowHostCoreLib/1.1.70": {
         "dependencies": {
-          "PigCmdLib": "2.2.110",
-          "PigSQLSrvCoreLib": "2.8.128"
+          "PigCmdLib": "2.2.112",
+          "PigSQLSrvCoreLib": "2.8.130"
         },
         "runtime": {
           "SeowHostCoreLib.dll": {}
@@ -262,37 +262,37 @@
           }
         }
       },
-      "PigCmdLib/2.2.110": {
+      "PigCmdLib/2.2.112": {
         "dependencies": {
-          "PigToolsLiteLib": "3.5.26"
+          "PigToolsLiteLib": "3.5.28"
         },
         "runtime": {
           "lib/netcoreapp3.1/PigCmdLib.dll": {
-            "assemblyVersion": "2.2.110.0",
-            "fileVersion": "2.2.110.0"
+            "assemblyVersion": "2.2.112.0",
+            "fileVersion": "2.2.112.0"
           }
         }
       },
-      "PigSQLSrvCoreLib/2.8.128": {
+      "PigSQLSrvCoreLib/2.8.130": {
         "dependencies": {
           "Microsoft.Data.SqlClient": "5.1.2",
-          "PigToolsLiteLib": "3.5.26"
+          "PigToolsLiteLib": "3.5.28"
         },
         "runtime": {
           "lib/netcoreapp3.1/PigSQLSrvCoreLib.dll": {
-            "assemblyVersion": "2.8.128.0",
-            "fileVersion": "2.8.128.0"
+            "assemblyVersion": "2.8.130.0",
+            "fileVersion": "2.8.130.0"
           }
         }
       },
-      "PigToolsLiteLib/3.5.26": {
+      "PigToolsLiteLib/3.5.28": {
         "dependencies": {
           "Microsoft.Win32.Registry": "5.0.0"
         },
         "runtime": {
           "lib/netcoreapp3.1/PigToolsLiteLib.dll": {
-            "assemblyVersion": "3.5.26.0",
-            "fileVersion": "3.5.26.0"
+            "assemblyVersion": "3.5.28.0",
+            "fileVersion": "3.5.28.0"
           }
         }
       },
@@ -599,7 +599,7 @@
     }
   },
   "libraries": {
-    "SeowHostCoreLib/1.1.68": {
+    "SeowHostCoreLib/1.1.70": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
@@ -737,26 +737,26 @@
       "path": "microsoft.win32.systemevents/6.0.0",
       "hashPath": "microsoft.win32.systemevents.6.0.0.nupkg.sha512"
     },
-    "PigCmdLib/2.2.110": {
+    "PigCmdLib/2.2.112": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-+JubO1K48+4QKhEkbtVROaY/kv6bvVZLFwPSGhT45MKs+PSGHBda607sT/U9eXZlb9o9Tka8qlWDPZngVClGWg==",
-      "path": "pigcmdlib/2.2.110",
-      "hashPath": "pigcmdlib.2.2.110.nupkg.sha512"
+      "sha512": "sha512-6ykV18rEDGlD7xacj5zwhTfuVQjGrCoGHgAqjR0XvXvfgLvU/ocrI3rOLA6MvWnI+e8LfkSE6xt3ICBYgD6TWg==",
+      "path": "pigcmdlib/2.2.112",
+      "hashPath": "pigcmdlib.2.2.112.nupkg.sha512"
     },
-    "PigSQLSrvCoreLib/2.8.128": {
+    "PigSQLSrvCoreLib/2.8.130": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-uuK0cD9dIdeh+BQNE6iKNX69pRTlomAA4JhLYyLIqbPBytItdJQhWxrxhAviafqfe3xeDBzblSgt9bYgFUL+WA==",
-      "path": "pigsqlsrvcorelib/2.8.128",
-      "hashPath": "pigsqlsrvcorelib.2.8.128.nupkg.sha512"
+      "sha512": "sha512-MpZ5cgg+agQefHofj2FDhfzbrsBMvrD4xnChrxIaOBF4UTmTLXTqzIedUBThTbYWV3Wn9XHnOkx5Wf+zOjsRHg==",
+      "path": "pigsqlsrvcorelib/2.8.130",
+      "hashPath": "pigsqlsrvcorelib.2.8.130.nupkg.sha512"
     },
-    "PigToolsLiteLib/3.5.26": {
+    "PigToolsLiteLib/3.5.28": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-GpAyRmPkDw0uafyIFtFoWGYe0xAFttux8rfLPB3clhHLxBU/8Pmt7EzeuRJC7DdZuVgsLkT2AFdt3DcGtgLuRA==",
-      "path": "pigtoolslitelib/3.5.26",
-      "hashPath": "pigtoolslitelib.3.5.26.nupkg.sha512"
+      "sha512": "sha512-++POlAVBenQ+BfynMOQVpuCyZ5AZHCPN5wQthi6HYCA6dTdZJ6Bu5iRpUX/HVFTYk7hAE0YhbsYSzXjclwtgNA==",
+      "path": "pigtoolslitelib/3.5.28",
+      "hashPath": "pigtoolslitelib.3.5.28.nupkg.sha512"
     },
     "System.Configuration.ConfigurationManager/6.0.1": {
       "type": "package",
