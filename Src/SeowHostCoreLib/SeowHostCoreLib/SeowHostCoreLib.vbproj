@@ -2,11 +2,11 @@
 
   <PropertyGroup>
     <RootNamespace>SeowHostCoreLib</RootNamespace>
-    <TargetFrameworks>netcoreapp3.1;net5.0;net6.0;net7.0;</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.1;net5.0;net6.0;net7.0;net8.0;</TargetFrameworks>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId></PackageId>
     <Title>Seow host Core library</Title>
-    <Version>1.1.82</Version>
+    <Version>1.1.86</Version>
     <Authors>Seowsoft</Authors>
     <Company>Seowsoft Studio</Company>
     <Description>This is a class library that handles host information, file and directory processing, and other functions.</Description>
@@ -23,8 +23,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="PigCmdLib" Version="2.2.128" />
-    <PackageReference Include="PigSQLSrvCoreLib" Version="2.8.138" />
+    <PackageReference Include="PigCmdLib" Version="2.2.130" />
+    <PackageReference Include="PigSQLSrvCoreLib" Version="2.8.150" />
   </ItemGroup>
 
   <ItemGroup>
