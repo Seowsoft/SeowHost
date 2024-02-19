@@ -3,12 +3,12 @@
   <PropertyGroup>
     <RootNamespace>SeowHostLib</RootNamespace>
     <TargetFrameworks>net20;net30;net35;net40;net45;net46;net47;net48;</TargetFrameworks>
-    <Version>1.1.100</Version>
+    <Version>1.1.102</Version>
     <Title>Seow host library</Title>
     <Authors>Seowsoft</Authors>
     <Company>Seowsoft Studio</Company>
     <Description>This is a class library that handles host information, file and directory processing, and other functions.</Description>
-    <Copyright>Copyright (c) 2021-2023 Seowsoft Studio</Copyright>
+    <Copyright>Copyright (c) 2021-2024 Seowsoft Studio</Copyright>
     <RepositoryType>git</RepositoryType>
     <PackageProjectUrl>https://www.seowsoft.com</PackageProjectUrl>
     <PackageIcon>Seowsoft.png</PackageIcon>
@@ -22,8 +22,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="PigCmdLib" Version="2.2.158" />
-    <PackageReference Include="PigSQLSrvLib" Version="2.8.162" />
+    <PackageReference Include="PigCmdLib" Version="2.2.160" />
+    <PackageReference Include="PigSQLSrvLib" Version="2.8.166" />
   </ItemGroup>
 
   <ItemGroup>
