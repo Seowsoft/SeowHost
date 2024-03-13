@@ -6,7 +6,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId></PackageId>
     <Title>Seow host Core library</Title>
-    <Version>1.1.106</Version>
+    <Version>1.1.108</Version>
     <Authors>Seowsoft</Authors>
     <Company>Seowsoft Studio</Company>
     <Description>This is a class library that handles host information, file and directory processing, and other functions.</Description>
@@ -23,8 +23,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="PigCmdLib" Version="2.2.162" />
-    <PackageReference Include="PigSQLSrvCoreLib" Version="2.8.166" />
+    <PackageReference Include="PigCmdLib" Version="2.2.166" />
+    <PackageReference Include="PigSQLSrvCoreLib" Version="2.8.168" />
   </ItemGroup>
 
   <ItemGroup>
